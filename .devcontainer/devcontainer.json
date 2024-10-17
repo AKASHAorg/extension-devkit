@@ -1,0 +1,14 @@
+{
+  "name": "Extension DevKit",
+  "dockerComposeFile": "./docker-compose.yml",
+  "service": "devcontainer",
+  "postCreateCommand": "yarn install",
+  "customizations": {
+    "jetbrains": {
+      "backend": "WebStorm"
+    }
+  },
+  "remoteUser": "node",
+  "workspaceFolder": "/workspace",
+  "forwardPorts": [8070]
+}

@@ -1,5 +1,23 @@
 {
-  "name": "radio-player",
+  "name": "extension-devkit",
   "packageManager": "yarn@4.3.1",
-  "private": true
+  "private": true,
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite dev"
+  },
+  "dependencies": {
+    "@akashaorg/core-sdk": "0.1.9-alpha",
+    "react": "18.3.1",
+    "react-dom": "18.3.1",
+    "single-spa-react": "6.0.2"
+  },
+  "devDependencies": {
+    "@akashaorg/typings": "0.1.3",
+    "@types/react": "18.3.11",
+    "@types/react-dom": "18.3.1",
+    "@vitejs/plugin-react": "4.3.2",
+    "vite": "5.4.8",
+    "vite-plugin-mkcert": "1.17.6"
+  }
 }

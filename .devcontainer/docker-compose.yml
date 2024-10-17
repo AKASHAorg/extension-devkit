@@ -1,0 +1,44 @@
+
+services:
+  devcontainer:
+    build: 
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    volumes:
+      - ..:/workspace
+    environment:
+      - NODE_ENV=development
+    working_dir: /workspace
+    user: node
+    tty: true
+    depends_on: 
+      - ceramic
+      - composedb
+  ipfs:
+    image: ceramicnetwork/go-ipfs-daemon:latest
+    volumes:
+      - ./data/ipfs:/data/ipfs
+    ports:
+      - '5001:5001'
+      - '8011:8011'
+    restart: 'unless-stopped'
+  ceramic:
+    image: ceramicnetwork/js-ceramic
+    volumes:
+      - ./data/ceramic:/root/.ceramic
+    command:
+      - '--network=inmemory'
+      - '--ipfs-api=http://ipfs:5001'
+    environment:
+      - NODE_ENV=production
+    ports:
+      - '7007:7007'
+    restart: unless-stopped
+  composedb:
+    image: akashafoundation/composedb-graphql
+    environment:
+      - NODE_ENV=production
+      - CERAMIC_API_ENDPOINT=http://ceramic:7007
+      - COMPOSEDB_GRAPHQL_PORT=8008
+    depends_on:
+      - ceramic
