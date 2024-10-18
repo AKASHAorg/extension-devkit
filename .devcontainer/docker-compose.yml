@@ -1,7 +1,7 @@
 
 services:
   devcontainer:
-    build: 
+    build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
     volumes:
@@ -11,7 +11,9 @@ services:
     working_dir: /workspace
     user: node
     tty: true
-    depends_on: 
+    ports:
+      - '8070:8070'
+    depends_on:
       - ceramic
       - composedb
   ipfs:
