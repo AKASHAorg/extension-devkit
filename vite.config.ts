@@ -11,8 +11,9 @@ export default defineConfig({
             fileName: () => 'index.js'
         },
         rollupOptions: {
-            external: ['react', 'react-dom', '@akashaorg/core-sdk'],
-        }
+            external: ['react', 'react-dom'],
+        },
+        minify: false
     },
     server: {
         host: true,
