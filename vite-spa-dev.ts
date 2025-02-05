@@ -171,15 +171,19 @@ export const ViteSpaDev = (opt: HMRPluginOptions): Plugin => {
                                 
 ************************************************
 Documentation: https://docs.akasha.world
-Server: https://localhost:8070
-MainFile: https://localhost:8070/dist/index.js
+Server: ${options.server.https ? 'https' : 'http'}://${options.server.host}:${options.server.port}
+MainFile: ${mainFile}
+
+🔴 Please open main file url in your browser to make sure that the index file loads.
+
 ************************************************
 Getting started:
-- create an app on https://
+- create a profile on https://next.akasha-world-framework.pages.dev
+- create an app on https://next.akasha-world-framework.pages.dev/@akashaorg/app-extensions/my-extensions
 - go to release manager and add a new local release
-- add the mainfile url to the local relase's source field
+- add the MainFile url from above to the local relase's source field
 ************************************************
-                        `)
+                        `);
                 });
             }
         }
