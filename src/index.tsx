@@ -6,6 +6,10 @@ import {
   LogoTypeSource,
 } from "@akashaorg/typings/lib/ui";
 
+/**
+ * Changes in this file requires a full reload in the browser!
+ */
+
 const SidebarIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -25,12 +29,12 @@ const SidebarIcon = () => (
 
 export const register = (opts: IntegrationRegistrationOptions): IAppConfig => {
   return {
-    loadingFn: () => import("./components"),
+    rootComponent: () => import("./components"),
     mountsIn: opts.layoutSlots?.applicationSlotId as string,
     menuItems: {
-      label: "Example App",
+      label: "Extension Devkit",
       logo: { type: LogoTypeSource.ICON, value: <SidebarIcon /> },
-      area: [MenuItemAreaType.AppArea],
+      area: [MenuItemAreaType.UserAppArea],
       subRoutes: [],
     },
   };

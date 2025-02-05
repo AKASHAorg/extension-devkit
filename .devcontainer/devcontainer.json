@@ -7,13 +7,16 @@
   "customizations": {
     "jetbrains": {
       "backend": "WebStorm"
+    },
+    "vscode": {
+      "extensions": ["esbenp.prettier-vscode"]
     }
   },
   "remoteUser": "node",
   "mounts": [
     "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated"
   ],
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
+  // "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
   "workspaceFolder": "/workspace",
-  "forwardPorts": [8070]
+  "forwardPorts": [8070, 8071]
 }

@@ -1,11 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import getSDK from "@akashaorg/core-sdk";
+import { Button } from "./Button";
 
 const App = () => {
   const sdk = getSDK();
-  console.log(sdk.services.common.misc.getIndexingDID());
-  return <div className="bg-white dark:bg-grey2 p-4 rounded-2xl">
-    <h3 className="text-black dark:text-white">Hello world 2!!</h3>
+  const [count, setCount] = useState(0);
+  
+  const incrementState = () => {
+    setCount(prev => prev + 1);
+  }
+
+  console.log("indexing did is: ", sdk.services.common.misc.getIndexingDID());
+  return <div className="bg-white dark:bg-grey2 p-4 rounded-2xl text-black dark:text-white">
+    <h3>Hello World!</h3>
+    <div>Count: {count}</div>
+    <div className="flex justify-center">
+      <Button label="Click me!" onClick={incrementState} />
+    </div>
   </div>;
 };
 

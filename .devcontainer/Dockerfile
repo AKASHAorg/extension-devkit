@@ -5,6 +5,3 @@ ENV COREPACK_ENABLE_DOWNLOAD_PROMPT 0
 
 WORKDIR /workspace
 RUN corepack enable && corepack prepare yarn@${YARN_VERSION} --activate
-
-ENV CHOKIDAR_USEPOLLING=true
-ENV WATCHPACK_POLLING=true
