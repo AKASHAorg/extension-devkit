@@ -84,10 +84,11 @@ export const ViteSpaDev = (opt: HMRPluginOptions): Plugin => {
             }
             return code;
         },
-        closeBundle() {
+        async closeBundle() {
             const isHTTPSServer = Boolean(options.server.https);
             const srvURI = 'localhost';
             const srvUrl = `${isHTTPSServer ? 'https://' : 'http://'}${srvURI}:${options.server.port}`;
+            const packageJSON = await import('./package.json');
             let { output } = config.build.rollupOptions;
             if (output && Array.isArray(output)) {
                 output = output[0];
@@ -180,8 +181,14 @@ MainFile: ${mainFile}
 Getting started:
 - create a profile on https://next.akasha-world-framework.pages.dev
 - create an app on https://next.akasha-world-framework.pages.dev/@akashaorg/app-extensions/my-extensions
-- go to release manager and add a new local release
-- add the MainFile url from above to the local relase's source field
+    - Select the extension type: APP
+    - fill the extension ID: ${packageJSON.name}
+    - fill out the Extension Display Name as the name you want
+    - select Extension License
+    - click on "Create Locally"
+- click on "Manage Releases" and then on "Test Release"
+- add the MainFile url from above to the local relase's source field.
+- click on "Test Release" and the app should be loaded automatically.
 ************************************************
                         `);
                 });

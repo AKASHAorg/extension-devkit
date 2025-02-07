@@ -55,13 +55,12 @@ export default defineConfig(({ mode }) => {
           format: "systemjs",
           entryFileNames: "index.js",
           chunkFileNames: "[name].js",
-          // assetFileNames: "[name].[extname]",
           systemNullSetters: true,
-          // manualChunks: (id) => {
-          //   if (id.includes('src')) {
-          //     return chunkFromId(id);
-          //   }
-          // }
+          manualChunks: (id) => {
+            if (id.includes('src')) {
+              return chunkFromId(id);
+            }
+          }
         },
         plugins: [
           externalGlobals({
