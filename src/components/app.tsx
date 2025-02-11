@@ -23,7 +23,7 @@ const App = () => {
         </div>
         <div className="w-full flex">
           <div>
-            Documentation: 
+            Documentation:
             <a className="ml-2 text-indigo-400" href="https://docs.akasha.world" target="_blank">
               docs.akasha.world
             </a>
