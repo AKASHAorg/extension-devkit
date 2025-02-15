@@ -24,8 +24,8 @@ const App = () => {
         <div className="w-full flex">
           <div>
             Documentation:
-            <a className="ml-2 text-indigo-400" href="https://docs.akasha.world" target="_blank">
-              docs.akasha.world
+            <a className="ml-2 text-indigo-400" href="https://docs.akasha.world/devkit" target="_blank">
+              docs.akasha.world/devkit
             </a>
           </div>
         </div>

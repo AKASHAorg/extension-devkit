@@ -3,20 +3,9 @@ import react from "@vitejs/plugin-react";
 import externalGlobals from "rollup-plugin-external-globals";
 import basicSsl from "@vitejs/plugin-basic-ssl";
 import path from "path";
-import { ViteSpaDev } from "./vite-spa-dev";
+import { chunkFromId, ViteSpaDev } from "./vite-spa-dev";
 
 const HMR_UPDATE_TOPIC = 'hmr-update'
-
-const chunkFromId = (id: string) => {
-  return `${id.split('/')
-    .slice(
-      id.split('/').indexOf('src'),
-      id.split('/').length + 1
-    )
-    .join('_')
-    .replaceAll('.tsx', '')
-    .replaceAll('.ts', '')}`;
-}
 
 
 export default defineConfig(({ mode }) => {

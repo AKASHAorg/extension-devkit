@@ -2,9 +2,22 @@ import chokidar, { FSWatcher } from 'chokidar';
 import { ResolvedConfig, Plugin } from 'vite';
 import { WebSocketServer } from 'ws';
 import { createServer, Server } from "https";
-import { existsSync, statSync, createReadStream } from 'fs';
+import { existsSync, statSync, createReadStream, readFileSync } from 'fs';
 import mime from 'mime';
 import path from 'path';
+import { EventName } from 'chokidar/handler.js';
+import { createHash } from 'crypto';
+
+export const chunkFromId = (id: string) => {
+    return `${id.split('/')
+      .slice(
+        id.split('/').indexOf('src'),
+        id.split('/').length + 1
+      )
+      .join('_')
+      .replaceAll('.tsx', '')
+      .replaceAll('.ts', '')}`;
+  }
 
 export type HMRPluginOptions = {
     targetFilePath: string;
@@ -14,6 +27,26 @@ export type HMRPluginOptions = {
         port: number;
         hmrTopic: string;
     }
+}
+type WatcherPayload = {
+    topic: string;
+    changeType: EventName;
+    path: string;
+    rootComponentPath: string;
+}
+const enum ChangeTypes {
+    ADD = 'add',
+    UNLINK = 'unlink',
+    CHANGE = 'change',
+}
+
+let fileHashes: { [key: string]: string } = {};
+
+function getFileHash(filePath: string): string {
+    const fileBuffer = readFileSync(filePath);
+    const hashSum = createHash('sha256');
+    hashSum.update(fileBuffer);
+    return hashSum.digest('hex');
 }
 
 export const ViteSpaDev = (opt: HMRPluginOptions): Plugin => {
@@ -34,40 +67,64 @@ export const ViteSpaDev = (opt: HMRPluginOptions): Plugin => {
                 return `
                 ${code}
                 if (__DEV__) {
+                    const safeSystemDelete = (path) => {
+                        if (System.has(path)) {
+                            System.delete(path);
+                        }
+                    }
+
+                    let debounceTimeout = null;
+
+                    const debounce = (fn, delay) => {
+                        return (...args) => {
+                            clearTimeout(debounceTimeout);
+                            debounceTimeout = setTimeout(() => fn(...args), delay);
+                        }
+                    }
+
                     const projectName = '${packageJSON.name}';
                     const wsNamespace = '${packageJSON.name}_ws';
-                    const listenHMR = () => {
+
+                    const listenHMR = async () => {
                         global[wsNamespace] = new WebSocket('${options.server.https ? 'wss' : 'ws'}://localhost:${options.server.port}');
                         global[wsNamespace].addEventListener('open', async () => {
                             console.info('HMR - enabled. Make sure you create an app with Extension ID: ${packageJSON.name}');
-                            console.info('Please consult the docs for more info: https://docs.akasha.world/');
+                            console.info('Please consult the docs for more info: https://docs.akasha.world/devkit/');
                         });
+
                         global[wsNamespace].addEventListener('error', (event) => {
                             console.warn('HMR - WebSocket failed to connect');
                         });
+
+                        if (!System) return;
+
+                        const sspa = await System.import(System.resolve('single-spa'));
+
+                        if (!sspa) {
+                            console.warn('Cannot update modules. Required package "single-spa" not found');
+                            return;
+                        }
+
+                        const reloadApp = debounce(async () => {
+                            await sspa.unloadApplication(projectName);
+                        }, 100);
+
                         global[wsNamespace].addEventListener('message', async (event) => {
                             try {
-                                const { type: evType, path: changedFile, mainFile } = JSON.parse(event.data);
-                                if (evType === '${options.server.hmrTopic}') {
-                                    if (System) {
-                                    const sspa = await System.import(System.resolve('single-spa'));
-                                    if (!sspa) {
-                                        console.warn('Cannot update modules. single-spa not found');
-                                        return;
+                                const { topic, changeType, path, rootComponentPath } = JSON.parse(event.data);
+                                if (topic === '${options.server.hmrTopic}') {
+                                    safeSystemDelete(path);
+                                    if (changeType === '${ChangeTypes.ADD}' || changeType === '${ChangeTypes.CHANGE}') {
+                                        await System.import(path);
                                     }
-                                    
-                                    System.delete(changedFile);
-                                    System.import(changedFile);
-
-                                    if (sspa.getAppStatus(projectName) === sspa.MOUNTED) {
-                                        await sspa.unloadApplication(projectName);
-                                    }
+                                    safeSystemDelete(rootComponentPath);
+                                    reloadApp();
                                 }
-                            }
                             } catch(err) {
                                 console.warn('HMR - failed to reload.', err);
                             }
                         });
+
                         global[wsNamespace].addEventListener('close', () => {
                             console.log('HMR - connection closed. will retry in 3s');
                             setTimeout(() => {
@@ -75,7 +132,7 @@ export const ViteSpaDev = (opt: HMRPluginOptions): Plugin => {
                             }, 3000);
                         });
                     }
-                        
+
                     if (typeof WebSocket !== 'undefined' && typeof global[wsNamespace] === 'undefined') {
                         listenHMR();
                     }
@@ -97,6 +154,7 @@ export const ViteSpaDev = (opt: HMRPluginOptions): Plugin => {
             const outDir = config.build.outDir;
 
             const mainFile = `${srvUrl}/${outDir}/${entryFile}`;
+            const rootComponentPath = `${srvUrl}/${outDir}/${chunkFromId(`src/${options.targetFilePath}`)}.js`;
 
             if (!wsServer) {
                 server = createServer({
@@ -137,14 +195,59 @@ export const ViteSpaDev = (opt: HMRPluginOptions): Plugin => {
                         interval: 50,
                     });
 
-                    fileWatcher.on('all', (ev, path) => {
+                    fileWatcher.on('add', (path, stats) => {
+                        const fileHash = getFileHash(path);
+                        fileHashes[path] = fileHash;
+
                         wsServer.clients.forEach(wsClient => {
                             if (wsClient.readyState === 1) {
-                                wsClient.send(JSON.stringify({
-                                    type: options.server.hmrTopic,
+
+                                const payload: WatcherPayload = {
+                                    topic: options.server.hmrTopic,
+                                    changeType: ChangeTypes.ADD,
                                     path: `${srvUrl}/${path}`,
-                                    mainFile
-                                }));
+                                    rootComponentPath,
+                                }
+
+                                wsClient.send(JSON.stringify(payload));
+                            }
+                        })
+                    });
+                    
+                    fileWatcher.on('change', (path) => {
+                        const currentFileHash = getFileHash(path);
+                        if (fileHashes[path] && currentFileHash === fileHashes[path]) return;
+                        fileHashes[path] = currentFileHash;
+                        
+                        wsServer.clients.forEach(wsClient => {
+                            if (wsClient.readyState === 1) {
+                                
+                                const payload: WatcherPayload = {
+                                    topic: options.server.hmrTopic,
+                                    changeType: ChangeTypes.CHANGE,
+                                    path: `${srvUrl}/${path}`,
+                                    rootComponentPath
+                                }
+                                
+                                wsClient.send(JSON.stringify(payload));
+                            }
+                        })
+                    });
+
+                    fileWatcher.on('unlink', (path) => {
+                        delete fileHashes[path];
+
+                        wsServer.clients.forEach(wsClient => {
+                            if (wsClient.readyState === 1) {
+                                
+                                const payload: WatcherPayload = {
+                                    topic: options.server.hmrTopic,
+                                    changeType: ChangeTypes.UNLINK,
+                                    path: `${srvUrl}/${path}`,
+                                    rootComponentPath,
+                                }
+                                
+                                wsClient.send(JSON.stringify(payload));
                             }
                         });
                     });
@@ -159,37 +262,37 @@ export const ViteSpaDev = (opt: HMRPluginOptions): Plugin => {
 
                 server.listen(options.server.port, options.server.host, () => {
                     console.log(`
-************************************************
-▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
-▐▌    ▝▚▞▘   █  ▐▌   ▐▛▚▖▐▌▐▌     █  ▐▌ ▐▌▐▛▚▖▐▌
-▐▛▀▀▘  ▐▌    █  ▐▛▀▀▘▐▌ ▝▜▌ ▝▀▚▖  █  ▐▌ ▐▌▐▌ ▝▜▌
-▐▙▄▄▖▗▞▘▝▚▖  █  ▐▙▄▄▖▐▌  ▐▌▗▄▄▞▘▗▄█▄▖▝▚▄▞▘▐▌  ▐▌
-                                                                             
-        ▗▄▄▄  ▗▄▄▄▖▗▖  ▗▖▗▖ ▗▖▗▄▄▄▖▗▄▄▄▖
-        ▐▌  █ ▐▌   ▐▌  ▐▌▐▌▗▞▘  █    █  
-        ▐▌  █ ▐▛▀▀▘▐▌  ▐▌▐▛▚▖   █    █  
-        ▐▙▄▄▀ ▐▙▄▄▖ ▝▚▞▘ ▐▌ ▐▌▗▄█▄▖  █  
-                                
-************************************************
-Documentation: https://docs.akasha.world
-Server: ${options.server.https ? 'https' : 'http'}://${options.server.host}:${options.server.port}
-MainFile: ${mainFile}
+    ************************************************
+    ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
+    ▐▌    ▝▚▞▘   █  ▐▌   ▐▛▚▖▐▌▐▌     █  ▐▌ ▐▌▐▛▚▖▐▌
+    ▐▛▀▀▘  ▐▌    █  ▐▛▀▀▘▐▌ ▝▜▌ ▝▀▚▖  █  ▐▌ ▐▌▐▌ ▝▜▌
+    ▐▙▄▄▖▗▞▘▝▚▖  █  ▐▙▄▄▖▐▌  ▐▌▗▄▄▞▘▗▄█▄▖▝▚▄▞▘▐▌  ▐▌
+                                                                                
+            ▗▄▄▄  ▗▄▄▄▖▗▖  ▗▖▗▖ ▗▖▗▄▄▄▖▗▄▄▄▖
+            ▐▌  █ ▐▌   ▐▌  ▐▌▐▌▗▞▘  █    █  
+            ▐▌  █ ▐▛▀▀▘▐▌  ▐▌▐▛▚▖   █    █  
+            ▐▙▄▄▀ ▐▙▄▄▖ ▝▚▞▘ ▐▌ ▐▌▗▄█▄▖  █  
+                                    
+    ************************************************
+    Documentation: https://docs.akasha.world
+    Server: ${options.server.https ? 'https' : 'http'}://${options.server.host}:${options.server.port}
+    MainFile: ${mainFile}
 
-🔴 Please open main file url in your browser to make sure that the index file loads.
+    🔴 Please open main file url in your browser to make sure that the index file loads.
 
-************************************************
-Getting started:
-- create a profile on https://next.akasha-world-framework.pages.dev
-- create an app on https://next.akasha-world-framework.pages.dev/@akashaorg/app-extensions/my-extensions
-    - Select the extension type: APP
-    - fill the extension ID: ${packageJSON.name}
-    - fill out the Extension Display Name as the name you want
-    - select Extension License
-    - click on "Create Locally"
-- click on "Manage Releases" and then on "Test Release"
-- add the MainFile url from above to the local relase's source field.
-- click on "Test Release" and the app should be loaded automatically.
-************************************************
+    ************************************************
+    Getting started:
+    - create a profile on https://next.akasha-world-framework.pages.dev
+    - create an app on https://next.akasha-world-framework.pages.dev/@akashaorg/app-extensions/my-extensions
+        - Select the extension type: APP
+        - fill the extension ID: ${packageJSON.name}
+        - fill out the Extension Display Name as the name you want
+        - select Extension License
+        - click on "Create Locally"
+    - click on "Manage Releases" and then on "Test Release"
+    - add the MainFile url from above to the local relase's source field.
+    - click on "Test Release" and the app should be loaded automatically.
+    ************************************************
                         `);
                 });
             }
