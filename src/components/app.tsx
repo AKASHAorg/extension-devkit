@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Button } from "./Button";
+import * as React from "react";
+import { Button } from "./ui/button";
 import { useAkashaStore } from "@akashaorg/ui-core-hooks";
 
 /*@ts-ignore-next-line*/
@@ -36,7 +36,7 @@ const App = () => {
       {!data.isAuthenticating && !data.authenticatedDID && (
           <div>
             <h3>No authenticated user</h3>
-            <Button label="Authenticate" onClick={handleAuth} />
+            <Button onClick={handleAuth}>Authenticate</Button>
           </div>
         )
       }

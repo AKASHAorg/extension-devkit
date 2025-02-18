@@ -4,21 +4,23 @@ import externalGlobals from "rollup-plugin-external-globals";
 import basicSsl from "@vitejs/plugin-basic-ssl";
 import path from "path";
 import { chunkFromId, ViteSpaDev } from "./vite-spa-dev";
+import tailwindcss from '@tailwindcss/vite';
 
 const HMR_UPDATE_TOPIC = 'hmr-update'
 
 
 export default defineConfig(({ mode }) => {
-  const isDev = mode === 'development';
+  const isProd = mode !== 'development';
   return {
     plugins: [
       react(),
+      tailwindcss(),
       basicSsl({
         name: "devkit-ssl",
         domains: ["localhost"],
         certDir: path.resolve(__dirname, ".devcontainer/ssl"),
       }),
-      ...(!isDev ? [ViteSpaDev({
+      ...(isProd ? [] : [ViteSpaDev({
         targetFilePath: 'components/index.tsx',
         server: {
           port: 8070,
@@ -26,11 +28,16 @@ export default defineConfig(({ mode }) => {
           host: '0.0.0.0',
           hmrTopic: HMR_UPDATE_TOPIC
         }
-      })] : []),
+      })]),
     ],
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+      },
+    },
     envPrefix: ["PUBLIC_", "NODE_"],
     define: {
-      __DEV__: !isDev,
+      __DEV__: !isProd,
     },
     build: {
       target: "esnext",
@@ -53,15 +60,14 @@ export default defineConfig(({ mode }) => {
         },
         plugins: [
           externalGlobals({
-            react: "React",
-            "reactDOM": "react-dom",
+            react: "global.React",
+            "reactDOM": "global.ReactDOM",
             "reactDOMClient": "react-dom/client",
-            "single-spa": "single-spa",
             "getSDK": "@akashaorg/core-sdk",
           }),
         ],
       },
-      minify: isDev ? false : true,
+      minify: isProd ? true : false,
       emptyOutDir: true,
     },
     logLevel: 'info' as const,
