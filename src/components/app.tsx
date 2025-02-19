@@ -1,11 +1,11 @@
-import * as React from "react";
-import { Button } from "./ui/button";
-import { useAkashaStore } from "@akashaorg/ui-core-hooks";
-
 /*@ts-ignore-next-line*/
 import logoWhite from '../assets/devkit-logo-white.png?inline';
 /*@ts-ignore-next-line*/
 import logoBlack from '../assets/devkit-logo-black.png?inline';
+
+import { Button } from "./ui/button";
+import { useAkashaStore } from "@akashaorg/ui-core-hooks";
+import { Card, CardContent, CardHeader } from "./ui/card";
 
 const App = () => {
   const { data } = useAkashaStore();
@@ -32,7 +32,14 @@ const App = () => {
         <hr />
       </div>
       {data.isAuthenticating && <div>User is authenticating...</div>}
-      {data.authenticatedDID && <div>User DID: <code>{data.authenticatedDID}</code></div>}
+      {data.authenticatedDID && (
+        <Card>
+          <CardHeader>Authenticated User</CardHeader>
+          <CardContent>
+            DID: {data.authenticatedDID}  
+          </CardContent>
+        </Card>
+      )}
       {!data.isAuthenticating && !data.authenticatedDID && (
           <div>
             <h3>No authenticated user</h3>
