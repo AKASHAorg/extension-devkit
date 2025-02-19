@@ -62,8 +62,32 @@ export const ViteSpaDev = (opt: HMRPluginOptions): Plugin => {
             config = resolved;
         },
         async transform(code, id) {
+            const packageJSON = await import('./package.json');
+
+            /**
+             * Patch the styling by adding the extension's name
+             * This is required to avoid overwriting the global styles
+             */
+            if (id.endsWith('.css')) {
+                const transformed: string[] = [];
+                for (const line of code.split('\n')) {
+                    let newLine: string = line;
+                    
+                    if (line === ':root {') {
+                        newLine = `#${packageJSON.name} {`;
+                    }
+                    
+                    if (line === '.dark {') {
+                        newLine = `.dark #${packageJSON.name} {`;
+                    }
+
+                    transformed.push(newLine);
+                }
+                return `${transformed.join('\n')}`;
+            }
+
             if (id.endsWith(options.targetFilePath)) {
-                const packageJSON = await import('./package.json');
+                
                 return `
                 ${code}
                 if (__DEV__) {
