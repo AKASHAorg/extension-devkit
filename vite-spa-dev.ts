@@ -131,7 +131,7 @@ export const ViteSpaDev = (opt: HMRPluginOptions): Plugin => {
 
                         const reloadApp = debounce(async () => {
                             await sspa.unloadApplication(projectName);
-                        }, 100);
+                        }, 250);
 
                         global[wsNamespace].addEventListener('message', async (event) => {
                             try {
@@ -141,8 +141,10 @@ export const ViteSpaDev = (opt: HMRPluginOptions): Plugin => {
                                     if (changeType === '${ChangeTypes.ADD}' || changeType === '${ChangeTypes.CHANGE}') {
                                         await System.import(path);
                                     }
-                                    safeSystemDelete(rootComponentPath);
-                                    reloadApp();
+                                    if (changeType !== '${ChangeTypes.UNLINK}') {
+                                        safeSystemDelete(rootComponentPath);
+                                        reloadApp();
+                                    }
                                 }
                             } catch(err) {
                                 console.warn('HMR - failed to reload.', err);
@@ -193,8 +195,8 @@ export const ViteSpaDev = (opt: HMRPluginOptions): Plugin => {
                         res.writeHead(404, { 'Content-Type': 'text/plain' });
                         return res.end(`File not found: ${req.url}`);
                     }
-
-                    let filePath = path.join(process.cwd(), req.url.split('?')[0]);
+                    
+                    let filePath = path.join(process.cwd(), req.url);
                     
                     if (existsSync(filePath) && statSync(filePath).isFile()) {
                         // wrong or no mimetype messes up with system (or single-spa) :|

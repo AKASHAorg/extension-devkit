@@ -48,23 +48,31 @@ export default defineConfig(({ mode }) => {
       __DEV__: !isProd,
     },
     build: {
+      modulePreload: true,
       target: 'esnext',
-      modulePreload: false,
       rollupOptions: {
         input: 'src/index.tsx',
-        preserveEntrySignatures: 'exports-only',
+        preserveEntrySignatures: 'strict',
         external: ['@akashaorg/core-sdk', '@akashaorg/ui-core-hooks', 'react', 'react-dom'],
         jsx: 'react-jsx',
         output: {
           dir: 'dist',
           format: 'systemjs',
           entryFileNames: 'index.js',
-          chunkFileNames: '[name].js',
+          chunkFileNames: (chunkInfo) => {
+            if (chunkInfo.name === 'vendor') {
+              return 'vendor.js';
+            }
+            return `${chunkInfo.name}.js`;
+          },
+          inlineDynamicImports: false,
+          experimentalMinChunkSize: Infinity,
           systemNullSetters: true,
           manualChunks: (id) => {
             if (id.includes('src')) {
               return chunkFromId(id);
             }
+            return 'vendor';
           },
           globals: {
             'react': 'React',
@@ -74,6 +82,9 @@ export default defineConfig(({ mode }) => {
       },
       minify: isProd ? true : false,
       emptyOutDir: true,
+    },
+    optimizeDeps: {
+      exclude: ['node_modules'],
     },
     logLevel: 'info' as const,
     clearScreen: true,

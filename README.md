@@ -35,7 +35,6 @@ Make sure you have [`yarn`](https://yarnpkg.com/getting-started/install) version
 1. Install dependencies using `yarn install`
 2. Run yarn dev to start the dev server and follow the on-screen steps to mount the extension.
 
-### 
 
 ## Docs and tutorials
 
