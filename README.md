@@ -33,7 +33,7 @@ If you don't want to use DevContainers you can setup the project manually.
 Make sure you have [`yarn`](https://yarnpkg.com/getting-started/install) version `4.3.1` or newer installed
 
 1. Install dependencies using `yarn install`
-2. Run yarn dev to start the dev server and follow the on-screen steps to mount the extension.
+2. Run `yarn dev` to start the dev server and follow the on-screen steps to mount the extension.
 
 
 ## Next Steps

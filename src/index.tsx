@@ -4,6 +4,7 @@ import {
   MenuItemAreaType,
   LogoTypeSource,
 } from "@akashaorg/typings/lib/ui";
+import { ROUTE_NAMES } from "./components/routes";
 
 /**
  * Changes in this file requires a full reload in the browser!
@@ -34,7 +35,19 @@ export const register = (opts: IntegrationRegistrationOptions): IAppConfig => {
       label: "Extension Devkit",
       logo: { type: LogoTypeSource.ICON, value: <SidebarIcon /> },
       area: [MenuItemAreaType.UserAppArea],
-      subRoutes: [],
+      subRoutes: [{
+        index: 1,
+        label: "Home",
+        route: ROUTE_NAMES.HOME,
+      }, {
+        index: 2,
+        label: "Documentation",
+        route: ROUTE_NAMES.DOCS,
+      }, {
+        index: 3,
+        label: "Components",
+        route: ROUTE_NAMES.COMPONENTS,
+      }],
     },
   };
 };
