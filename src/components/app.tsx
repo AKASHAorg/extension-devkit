@@ -7,6 +7,7 @@ import { Button } from './ui/button';
 import { useAkashaStore } from '@akashaorg/ui-core-hooks';
 import { Card, CardContent, CardFooter, CardHeader } from './ui/card'
 import { Image, ImageRoot } from './ui/image';
+import { Typography } from './ui/typography';
 
 const App = () => {
   const { data } = useAkashaStore();
@@ -17,10 +18,10 @@ const App = () => {
 
   return (
     <div>
-      <div className="bg-white dark:bg-grey2 shadow-[0_0_4px_rgba(0,0,0,0.2)] dark:shadow-[0_0_4px_rgba(0,0,0,0.2)] p-4 rounded-2xl text-black dark:text-white justify-center border-none">
+      <div className="p-4 rounded-2xl text-black dark:text-white justify-center border-none">
         <div className="gap-4 flex flex-col">
           <div>
-            <ImageRoot className='flex justify-center'>
+            <ImageRoot className='flex justify-center opacity-60'>
               <Image src={logoWhite} className="hidden dark:block w-2/3" />
               <Image src={logoBlack} className="dark:hidden w-2/3" />
             </ImageRoot>
@@ -38,7 +39,9 @@ const App = () => {
       {data.isAuthenticating && <div>User is authenticating...</div>}
         {data.authenticatedDID && (
           <Card>
-            <CardHeader>Authenticated User</CardHeader>
+            <CardHeader>
+              <Typography>Authenticated User</Typography>
+            </CardHeader>
             <CardContent>
               DID: {data.authenticatedDID}  
             </CardContent>

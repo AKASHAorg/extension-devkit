@@ -36,8 +36,6 @@ Make sure you have [`yarn`](https://yarnpkg.com/getting-started/install) version
 2. Run yarn dev to start the dev server and follow the on-screen steps to mount the extension.
 
 
-## Docs and tutorials
+## Next Steps
 
-Documentation is available on [https://docs.akasha.world](https://docs.akasha.world)
-
-Tutorials and examples coming soon.
+Please follow the [setup and development workflow](https://devkit-docs.akasha-docs.pages.dev/devkit/setup) to get the extension mounted into a world.
