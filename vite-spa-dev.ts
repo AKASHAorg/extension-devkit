@@ -287,8 +287,8 @@ export const ViteSpaDev = (opt: HMRPluginOptions): Plugin => {
                 });
 
                 server.listen(options.server.port, options.server.host, () => {
-                    console.log(`
-    ************************************************
+                    console.info(`
+*********************************************************
     ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
     ▐▌    ▝▚▞▘   █  ▐▌   ▐▛▚▖▐▌▐▌     █  ▐▌ ▐▌▐▛▚▖▐▌
     ▐▛▀▀▘  ▐▌    █  ▐▛▀▀▘▐▌ ▝▜▌ ▝▀▚▖  █  ▐▌ ▐▌▐▌ ▝▜▌
@@ -299,27 +299,17 @@ export const ViteSpaDev = (opt: HMRPluginOptions): Plugin => {
             ▐▌  █ ▐▛▀▀▘▐▌  ▐▌▐▛▚▖   █    █  
             ▐▙▄▄▀ ▐▙▄▄▖ ▝▚▞▘ ▐▌ ▐▌▗▄█▄▖  █  
                                     
-    ************************************************
-    Documentation: https://docs.akasha.world
-    Server: ${options.server.https ? 'https' : 'http'}://${options.server.host}:${options.server.port}
-    MainFile: ${mainFile}
-
-    🔴 Please open main file url in your browser to make sure that the index file loads.
-
-    ************************************************
-    Getting started:
-    - create a profile on https://next.akasha-world-framework.pages.dev
-    - create an app on https://next.akasha-world-framework.pages.dev/@akashaorg/app-extensions/my-extensions
-        - Select the extension type: APP
-        - fill the extension ID: ${packageJSON.name}
-        - fill out the Extension Display Name as the name you want
-        - select Extension License
-        - click on "Create Locally"
-    - click on "Manage Releases" and then on "Test Release"
-    - add the MainFile url from above to the local relase's source field.
-    - click on "Test Release" and the app should be loaded automatically.
-    ************************************************
-                        `);
+*********************************************************
+`);
+    console.log('\x1b[36m%s\x1b[0m', 'Documentation: \x1b[0m','https://docs.akasha.world/devkit');
+    console.log('');
+    console.log('\x1b[36m%s\x1b[0m', 'Server: \x1b[0m', `${options.server.https ? 'https' : 'http'}://${options.server.host}:${options.server.port}`);
+    console.log('\x1b[36m%s\x1b[0m', 'Extension ID: \x1b[0m', `${packageJSON.name}`);
+    console.log('\x1b[36m%s\x1b[0m','MainFile: \x1b[0m', `${mainFile}`);
+    console.log('');
+    console.log('🔴 Please open MainFile url (from above) in your browser to make sure that the index file loads.');
+    console.log('');
+    console.log('*********************************************************');
                 });
             }
         }

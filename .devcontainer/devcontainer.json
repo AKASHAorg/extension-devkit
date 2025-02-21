@@ -9,7 +9,7 @@
       "backend": "WebStorm"
     },
     "vscode": {
-      "extensions": ["esbenp.prettier-vscode"]
+      "extensions": ["esbenp.prettier-vscode", "bradlc.vscode-tailwindcss"]
     }
   },
   "remoteUser": "node",

@@ -3,7 +3,7 @@ import {
   IntegrationRegistrationOptions,
   MenuItemAreaType,
   LogoTypeSource,
-} from "@akashaorg/typings/lib/ui";
+} from '@akashaorg/typings/lib/ui';
 
 /**
  * Changes in this file requires a full reload in the browser!
@@ -28,10 +28,10 @@ const SidebarIcon = () => (
 
 export const register = (opts: IntegrationRegistrationOptions): IAppConfig => {
   return {
-    rootComponent: () => import("./components"),
+    rootComponent: () => import('./components'),
     mountsIn: opts.layoutSlots?.applicationSlotId as string,
     menuItems: {
-      label: "Extension Devkit",
+      label: 'Extension Devkit',
       logo: { type: LogoTypeSource.ICON, value: <SidebarIcon /> },
       area: [MenuItemAreaType.UserAppArea],
       subRoutes: [],
