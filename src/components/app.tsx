@@ -4,16 +4,21 @@ import logoWhite from '../assets/devkit-logo-white.png?inline';
 import logoBlack from '../assets/devkit-logo-black.png?inline';
 
 import { Button } from './ui/button';
-import { useAkashaStore } from '@akashaorg/ui-core-hooks';
+import { useAkashaStore, useRootComponentProps } from '@akashaorg/ui-core-hooks';
 import { Card, CardContent, CardFooter, CardHeader } from './ui/card';
 import { Image, ImageRoot } from './ui/image';
 import { Typography } from './ui/typography';
 
 const App = () => {
   const { data } = useAkashaStore();
+  // we'll use the navigateToModal function to navigate to the Profile App's login modal
+  const { navigateToModal } = useRootComponentProps();
 
   const handleAuth = () => {
-    // @todo
+    navigateToModal({
+      name: 'login',
+      redirectTo: window.location.pathname,
+    });
   };
 
   return (
@@ -40,13 +45,23 @@ const App = () => {
           </div>
         </div>
       </div>
+      {data.authenticationError && (
+        <div>Error authenticating user: {data.authenticationError.message}</div>
+      )}
       {data.isAuthenticating && <div>User is authenticating...</div>}
+      {data.authenticatedProfileError && (
+        <div>Error loading profile: {data.authenticatedProfileError.message}</div>
+      )}
       {data.authenticatedDID && (
         <Card>
           <CardHeader>
             <Typography>Authenticated User</Typography>
           </CardHeader>
-          <CardContent>DID: {data.authenticatedDID}</CardContent>
+          <CardContent>
+            <Typography>DID: {data.authenticatedDID}</Typography>
+            <Typography>Name: {data.authenticatedProfile.name}</Typography>
+            <Typography>About: {data.authenticatedProfile.description}</Typography>
+          </CardContent>
           <CardFooter>
             <Button>View Profile</Button>
           </CardFooter>
