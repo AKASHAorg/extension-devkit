@@ -57,10 +57,16 @@ const App = () => {
           <CardHeader>
             <Typography>Authenticated User</Typography>
           </CardHeader>
-          <CardContent>
-            <Typography>DID: {data.authenticatedDID}</Typography>
-            <Typography>Name: {data.authenticatedProfile.name}</Typography>
-            <Typography>About: {data.authenticatedProfile.description}</Typography>
+          <CardContent className="flex-col gap-2">
+            <div>
+              <Typography>DID: {data.authenticatedDID}</Typography>
+            </div>
+            <div>
+              <Typography>Name: {data.authenticatedProfile.name}</Typography>
+            </div>
+            <div>
+              <Typography>About: {data.authenticatedProfile.description}</Typography>
+            </div>
           </CardContent>
           <CardFooter>
             <Button>View Profile</Button>
