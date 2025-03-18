@@ -4,6 +4,7 @@ import {
   MenuItemAreaType,
   LogoTypeSource,
 } from '@akashaorg/typings/lib/ui';
+import { SquareCheck } from 'lucide-react';
 
 /**
  * Changes in this file requires a full reload in the browser!
@@ -36,5 +37,13 @@ export const register = (opts: IntegrationRegistrationOptions): IAppConfig => {
       area: [MenuItemAreaType.UserAppArea],
       subRoutes: [],
     },
+    contentBlocks: [
+      {
+        propertyType: 'poll-block',
+        icon: <SquareCheck />,
+        displayName: 'Poll block',
+        rootComponent: () => import('./extensions/poll-block'),
+      },
+    ],
   };
 };
