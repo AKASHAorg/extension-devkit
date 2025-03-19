@@ -126,14 +126,14 @@ const POLL_SELECTIONS: PollSelection[] = [
   {
     did: 'did:pkh:eip155:11155111:0x1a4b3c567890abcdeffedcba1234567890abcdef',
     pollId: 'poll_1',
-    optionId: 'opt_1',
+    optionId: 'opt_3',
     value: true,
   },
   {
     did: 'did:pkh:eip155:11155111:0x1a4b3c567890abcdeffedcba1234567890abcdef',
     pollId: 'poll_3',
     optionId: 'opt_10',
-    value: false,
+    value: true,
   },
   {
     did: 'did:pkh:eip155:11155111:0x1a4b3c567890abcdeffedcba1234567890abcdef',
@@ -145,7 +145,7 @@ const POLL_SELECTIONS: PollSelection[] = [
     did: 'did:pkh:eip155:11155111:0x1a4b3c567890abcdeffedcba1234567890abcdef',
     pollId: 'poll_9',
     optionId: 'opt_32',
-    value: false,
+    value: true,
   },
 ];
 
