@@ -1,13 +1,14 @@
 import * as React from 'react';
 import { withProviders } from '@akashaorg/ui-core-hooks';
 
-import {
-  BlockInstanceMethods,
-  ContentBlockModes,
-  ContentBlockRootProps,
-} from '@akashaorg/typings/lib/ui';
+import { BlockInstanceMethods, ContentBlockRootProps } from '@akashaorg/typings/lib/ui';
 import { PollBlock } from './poll-block';
 import { PollReadonlyBlock } from './poll-readonly-block';
+
+const ContentBlockModes = {
+  EDIT: 'edit-mode',
+  READONLY: 'read-only-mode',
+};
 
 const PollBlockExtension = (
   props: ContentBlockRootProps & { blockRef?: React.RefObject<BlockInstanceMethods> },
