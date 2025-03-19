@@ -36,5 +36,15 @@ export const register = (opts: IntegrationRegistrationOptions): IAppConfig => {
       area: [MenuItemAreaType.UserAppArea],
       subRoutes: [],
     },
+    extensionPoints: [
+      {
+        mountsIn: 'topbar_notification_button',
+        rootComponent: () => import('./extensions/button-a'),
+      },
+      {
+        mountsIn: 'topbar_extension_right',
+        rootComponent: () => import('./extensions/button-b'),
+      },
+    ],
   };
 };
