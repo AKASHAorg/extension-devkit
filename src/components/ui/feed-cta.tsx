@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import * as React from "react";
+import * as React from 'react';
 
-import { cn } from "@/lib/utils";
-import { Card } from "@/components/ui/card";
+import { cn } from '@/lib/utils';
+import { Card } from '@/components/ui/card';
 import {
   ProfileAvatar,
   ProfileAvatarFallback,
   ProfileAvatarImage,
-} from "@/components/ui/profile-avatar";
-import { Stack } from "@/components/ui/stack";
-import { Typography } from "@/components/ui/typography";
+} from '@/components/ui/profile-avatar';
+import { Stack } from '@/components/ui/stack';
+import { Typography } from '@/components/ui/typography';
 
 const FeedCTA = ({
   avatarSrc,
@@ -23,12 +23,9 @@ const FeedCTA = ({
   avatarSrc: string;
   profileDID: string;
   cta: string;
-} & React.ComponentProps<"div">) => {
+} & React.ComponentProps<'div'>) => {
   return (
-    <Card
-      className={cn("border-zinc-200 bg-nested-card p-4 dark:border-zinc-800", className)}
-      {...props}
-    >
+    <Card className={cn('border-border bg-nested-card p-4', className)} {...props}>
       <Stack direction="row" alignItems="center" justifyContent="between">
         <Stack direction="row" alignItems="center" spacing={2}>
           <ProfileAvatar profileDID={profileDID}>

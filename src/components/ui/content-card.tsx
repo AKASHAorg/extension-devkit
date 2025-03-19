@@ -29,8 +29,8 @@ const ContentCard = ({
   publishedAt?: string;
 } & React.ComponentProps<typeof Card>) => {
   return (
-    <Card data-slot="content-card" className={cn('p-4 w-full', className)} {...props}>
-      <CardHeader data-slot="content-card-header">
+    <Card className={cn('p-4 w-full', className)} {...props}>
+      <CardHeader>
         <ProfileAvatarButton profileDID={author.did}>
           <ProfileAvatarButtonAvatar>
             <ProfileAvatarButtonAvatarImage src={author.avatarSrc} alt={author.name} />
@@ -39,7 +39,7 @@ const ContentCard = ({
           <ProfileName>
             {author.name}
             {publishedAt && (
-              <Typography variant="xs" className="text-zinc-500 font-normal dark:text-zinc-400">
+              <Typography variant="xs" className="text-muted-foreground font-normal">
                 {' '}
                 · {publishedAt}
               </Typography>
