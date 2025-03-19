@@ -1,15 +1,17 @@
 {
-    "compilerOptions": {
-        "rootDir": ".",
-        "baseUrl": ".",
-        "lib": ["ESNext", "DOM"],
-        "jsx": "react-jsx",
-        "esModuleInterop": true,
-        "strictNullChecks": true,
-        "module": "ESNext",
-        "moduleResolution": "bundler",
-        "paths": {
-            "@/*": ["./src/*"]
-        }
+  "compilerOptions": {
+    "rootDir": ".",
+    "baseUrl": ".",
+    "lib": ["ESNext", "DOM"],
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "strictNullChecks": true,
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "preserveConstEnums": true,
+    "isolatedModules": true,
+    "paths": {
+      "@/*": ["./src/*"]
     }
+  }
 }
