@@ -93,9 +93,9 @@ function FormLabel({
       data-error={!!error}
       data-required={!!required}
       className={cn(
-        'data-[error=true]:text-red-500 dark:data-[error=true]:text-red-900',
+        'data-[error=true]:text-destructive',
         'text-base',
-        "after:content-['_*'] after:text-red-500 data-[required=false]:after:hidden dark:after:text-red-900",
+        "after:content-['_*'] after:text-destructive data-[required=false]:after:hidden",
         className,
       )}
       htmlFor={formItemId}
@@ -125,7 +125,7 @@ function FormDescription({ className, ...props }: React.ComponentProps<'p'>) {
     <p
       data-slot="form-description"
       id={formDescriptionId}
-      className={cn('text-zinc-500 text-xs dark:text-zinc-400', className)}
+      className={cn('text-muted-foreground text-xs', className)}
       {...props}
     />
   );
@@ -143,10 +143,10 @@ function FormMessage({ className, ...props }: React.ComponentProps<'p'>) {
     <p
       data-slot="form-message"
       id={formMessageId}
-      className={cn('flex items-center gap-1 text-red-500 text-xs dark:text-red-900', className)}
+      className={cn('flex items-center gap-1 text-destructive text-xs', className)}
       {...props}
     >
-      <CircleX size={16} className="text-red-500 dark:text-red-900" />
+      <CircleX size={16} className="text-destructive" />
       {body}
     </p>
   );
