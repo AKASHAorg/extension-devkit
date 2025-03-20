@@ -67,9 +67,7 @@ const PollForm = ({ onSubmit }: { onSubmit: (data: z.infer<typeof FormSchema>) =
               render={({ field }) => (
                 <FormItem>
                   <FormLabel required>
-                    <Typography variant="p" className="font-bold">
                       Poll title
-                    </Typography>
                   </FormLabel>
                   <FormControl>
                     <Input placeholder="Poll title" {...field} />
@@ -84,9 +82,7 @@ const PollForm = ({ onSubmit }: { onSubmit: (data: z.infer<typeof FormSchema>) =
               render={({ field }) => (
                 <FormItem>
                   <FormLabel required>
-                    <Typography variant="p" className="font-bold">
                       Poll description
-                    </Typography>
                   </FormLabel>
                   <FormControl>
                     <Textarea placeholder="Poll description" {...field} />
