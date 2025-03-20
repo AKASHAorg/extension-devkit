@@ -21,22 +21,25 @@ export default defineConfig(({ mode }) => {
         certDir: path.resolve(__dirname, '.devcontainer/ssl'),
       }),
       createExternal({
-        externalGlobals,
         externals: {
           react: 'React',
           'react-dom': 'ReactDOM',
-          '@akashaorg/core-sdk': '@akashaorg/core-sdk'
-        }
+          '@akashaorg/core-sdk': '@akashaorg/core-sdk',
+        },
       }),
-      ...(isProd ? [] : [ViteSpaDev({
-        targetFilePath: 'components/index.tsx',
-        server: {
-          port: 8070,
-          https: true,
-          host: '0.0.0.0',
-          hmrTopic: HMR_UPDATE_TOPIC
-        }
-      })]),
+      ...(isProd
+        ? []
+        : [
+            ViteSpaDev({
+              targetFilePath: 'components/index.tsx',
+              server: {
+                port: 8070,
+                https: true,
+                host: '0.0.0.0',
+                hmrTopic: HMR_UPDATE_TOPIC,
+              },
+            }),
+          ]),
     ],
     resolve: {
       alias: {
@@ -55,11 +58,17 @@ export default defineConfig(({ mode }) => {
         preserveEntrySignatures: 'strict',
         external: ['@akashaorg/core-sdk', '@akashaorg/ui-core-hooks', 'react', 'react-dom'],
         jsx: 'react-jsx',
+        plugins: [
+          externalGlobals({
+            react: 'React',
+            'react-dom': 'ReactDOM',
+          }),
+        ],
         output: {
           dir: 'dist',
           format: 'systemjs',
           entryFileNames: 'index.js',
-          chunkFileNames: (chunkInfo) => {
+          chunkFileNames: chunkInfo => {
             if (chunkInfo.name === 'vendor') {
               return 'vendor.js';
             }
@@ -68,16 +77,16 @@ export default defineConfig(({ mode }) => {
           inlineDynamicImports: false,
           experimentalMinChunkSize: Infinity,
           systemNullSetters: true,
-          manualChunks: (id) => {
+          manualChunks: id => {
             if (id.includes('src')) {
               return chunkFromId(id);
             }
             return 'vendor';
           },
           globals: {
-            'react': 'React',
-            'react-dom': 'ReactDOM'
-          }
+            react: 'React',
+            'react-dom': 'ReactDOM',
+          },
         },
       },
       minify: isProd ? true : false,

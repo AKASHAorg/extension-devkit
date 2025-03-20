@@ -3,4 +3,4 @@
   Tailwind classes will be inherited from the world 
   this extension mounts in.
 */
-@custom-variant dark (&:is(.dark *))
+@custom-variant dark (&:is(.dark *));

@@ -3,7 +3,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
 
 import { cn } from '@/lib/utils';
 
-const stackVariants = cva('flex', {
+const stackVariants = cva('flex divide-accent', {
   variants: {
     justifyContent: {
       start: 'justify-start',
@@ -33,39 +33,38 @@ const stackVariants = cva('flex', {
   },
 });
 
-const Stack = React.forwardRef<
-  React.ElementRef<'div'>,
-  React.ComponentProps<'div'> &
-    VariantProps<typeof stackVariants> & {
-      spacing?: number;
-      divider?: boolean;
-    }
->(
-  (
-    { className, justifyContent, alignItems, direction = 'column', divider, spacing, ...props },
-    ref,
-  ) => {
-    return (
-      <div
-        ref={ref}
-        data-slot="stack"
-        className={cn(
-          stackVariants({
-            justifyContent,
-            alignItems,
-            direction,
-            className,
-          }),
-          spacing && `gap-${spacing}`,
-          divider && {
-            'divide-y': direction === 'column' || direction === 'columnReverse',
-            'divide-x': direction === 'row' || direction === 'rowReverse',
-          },
-        )}
-        {...props}
-      />
-    );
-  },
-);
+const Stack = ({
+  className,
+  justifyContent,
+  alignItems,
+  direction = 'column',
+  divider,
+  spacing,
+  ...props
+}: React.ComponentProps<'div'> &
+  VariantProps<typeof stackVariants> & {
+    spacing?: number;
+    divider?: boolean;
+  }) => {
+  return (
+    <div
+      data-slot="stack"
+      className={cn(
+        stackVariants({
+          justifyContent,
+          alignItems,
+          direction,
+          className,
+        }),
+        spacing && `gap-${spacing}`,
+        divider && {
+          'divide-y': direction === 'column' || direction === 'columnReverse',
+          'divide-x': direction === 'row' || direction === 'rowReverse',
+        },
+      )}
+      {...props}
+    />
+  );
+};
 
 export { Stack, stackVariants };
