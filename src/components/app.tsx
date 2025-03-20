@@ -3,8 +3,18 @@ import { FeedCTA } from '@/components/ui/feed-cta';
 import { Stack } from '@/components/ui/stack';
 import { POLLS } from '@/components/mock-data';
 import { PollCard } from '@/components/poll-card';
+import { getPolls } from '../api';
+import { useEffect } from 'react';
 
 const App = () => {
+  useEffect(() => {
+    const getAllPolls = async () => {
+      const polls = await getPolls();
+      console.log(polls, '<< polls data in componenet');
+    };
+    getAllPolls();
+  }, []);
+
   return (
     <Stack spacing={4}>
       <FeedCTA
