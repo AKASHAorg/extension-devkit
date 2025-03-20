@@ -5,6 +5,8 @@ import {
   LogoTypeSource,
 } from '@akashaorg/typings/lib/ui';
 import { SquareCheck } from 'lucide-react';
+import getSDK from '@akashaorg/core-sdk';
+import { getComposeClient } from './api';
 
 /**
  * Changes in this file requires a full reload in the browser!
@@ -26,6 +28,13 @@ const SidebarIcon = () => (
     />
   </svg>
 );
+
+export const initialize = () => {
+  const sdk = getSDK();
+  const compose = getComposeClient();
+  const resources = compose.resources;
+  resources.forEach(res => sdk.services.ceramic.setExtraResource(res));
+};
 
 export const register = (opts: IntegrationRegistrationOptions): IAppConfig => {
   return {

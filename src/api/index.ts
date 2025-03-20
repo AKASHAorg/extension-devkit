@@ -6,7 +6,7 @@ import getSDK from '@akashaorg/core-sdk';
 
 let composeClient: ComposeClient;
 
-const getComposeClient = () => {
+export const getComposeClient = () => {
   if (!composeClient) {
     composeClient = new ComposeClient({
       ceramic: 'http://localhost:7007',
@@ -16,11 +16,25 @@ const getComposeClient = () => {
   return composeClient;
 };
 
-const autorizeResources = async () => {
+export const hasSession = async (): Promise<boolean> => {
   const sdk = getSDK();
-};
 
-autorizeResources();
+  if (!composeClient) {
+    return false;
+  }
+
+  const hasSession = await sdk.services.ceramic.hasSession();
+
+  if (hasSession) {
+    const sessDID = sdk.services.ceramic.getComposeClient().did;
+    if (sessDID) {
+      composeClient.setDID(sessDID);
+      return true;
+    }
+    return false;
+  }
+  return false;
+};
 
 export const getPolls = async () => {
   const compose = getComposeClient();
@@ -39,6 +53,32 @@ export const getPolls = async () => {
               id
               name
             }
+          }
+        }
+      }
+    }
+  `);
+  console.log(res);
+  return res;
+};
+
+export const createPoll = async (title: string, options: { id: string; name: string }[]) => {
+  const compose = getComposeClient();
+  const res = await compose.executeQuery(`
+    mutation CreatePoll {
+      createPoll(input: {
+        content: {
+          title: "${title}",
+          created: "${new Date().toISOString()}",
+          options: [${options.map(opt => `{id: "${opt.id}", name: "${opt.name}"}`).join(',')}]
+        }
+      }) {
+        document {
+          title
+          created
+          options {
+            id
+            name
           }
         }
       }
