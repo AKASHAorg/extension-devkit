@@ -20,7 +20,7 @@ const Component: React.FC<IRootExtensionProps> = () => {
   );
 };
 
-const LikeButton = (props: IRootExtensionProps) => {
+const ButtonA = (props: IRootExtensionProps) => {
   return <Component {...props} />;
 };
-export default withProviders(LikeButton);
+export default withProviders(ButtonA);
