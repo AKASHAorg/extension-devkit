@@ -1,0 +1,13 @@
+type Poll @loadModel(id: "$POLL_ID") {
+  id: ID! 
+}
+
+type Vote
+  @createModel(accountRelation: LIST, description: "A simple vote") {
+    ID: ID!
+    optionId: String! @string(minLength: 1, maxLength: 50)
+    voter: DID! @documentAccount
+    created: DateTime!
+    pollID: StreamID! @documentReference(model: "Poll")
+    isValid: Boolean!
+}
