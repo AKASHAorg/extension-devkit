@@ -70,4 +70,4 @@ const router = ({ baseRouteName, apolloClient }: ICreateRouter) =>
     defaultErrorComponent: ({ error }) => <div>Error: {error.message}</div>,
   });
 
-export { routes, POLL_EDITOR, POLLS };
+export { routes, router,  POLL_EDITOR, POLLS };
