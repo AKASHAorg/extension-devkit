@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { PlusIcon } from 'lucide-react';
+import { PlusIcon, TrashIcon } from 'lucide-react';
 import { Card, CardHeader, CardTitle } from './ui/card';
 import { Typography } from './ui/typography';
 import { Stack } from './ui/stack';
@@ -66,9 +66,7 @@ const PollForm = ({ onSubmit }: { onSubmit: (data: z.infer<typeof FormSchema>) =
               name="title"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel required>
-                      Poll title
-                  </FormLabel>
+                  <FormLabel required>Poll title</FormLabel>
                   <FormControl>
                     <Input placeholder="Poll title" {...field} />
                   </FormControl>
@@ -81,9 +79,7 @@ const PollForm = ({ onSubmit }: { onSubmit: (data: z.infer<typeof FormSchema>) =
               name="description"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel required>
-                      Poll description
-                  </FormLabel>
+                  <FormLabel required>Poll description</FormLabel>
                   <FormControl>
                     <Textarea placeholder="Poll description" {...field} />
                   </FormControl>
@@ -99,7 +95,25 @@ const PollForm = ({ onSubmit }: { onSubmit: (data: z.infer<typeof FormSchema>) =
                 render={({ field }) => (
                   <FormItem>
                     <FormControl>
-                      <Input className="" {...field} placeholder={`Option ${index + 1}`} />
+                      <Stack
+                        direction="row"
+                        alignItems="center"
+                        justifyContent={'between'}
+                        spacing={3}
+                      >
+                        <Input className="" {...field} placeholder={`Option ${index + 1}`} />
+                        {index > 1 && (
+                          <Button
+                            type="button"
+                            variant="link"
+                            onClick={() => remove(index)}
+                            className="text-destructive"
+                            asChild
+                          >
+                            <TrashIcon size={20} />
+                          </Button>
+                        )}
+                      </Stack>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
