@@ -1,15 +1,13 @@
-import { Button } from '@/components/ui/button';
-import { FeedCTA } from '@/components/ui/feed-cta';
-import { Stack } from '@/components/ui/stack';
-import { POLLS } from '@/components/mock-data';
-import { PollCard } from '@/components/poll-card';
-import { getPolls, hasSession } from '../api';
-import { useEffect, useState } from 'react';
-import { useAkashaStore } from '@akashaorg/ui-core-hooks';
+import { RouterProvider } from '@tanstack/react-router';
+import { useAkashaStore, useRootComponentProps } from '@akashaorg/ui-core-hooks';
+import { router } from './app-routes';
+import React, { useEffect, useState } from 'react';
+import { hasSession } from '@/api';
 import { Card, CardContent } from './ui/card';
 import { Typography } from './ui/typography';
 
-const App = () => {
+const App: React.FC<unknown> = () => {
+  const { baseRouteName } = useRootComponentProps();
   const {
     data: { authenticatedDID, isAuthenticating },
   } = useAkashaStore();
@@ -26,16 +24,8 @@ const App = () => {
     checkAuthorization();
   }, [authenticatedDID, isAuthenticating]);
 
-  useEffect(() => {
-    const getAllPolls = async () => {
-      const polls = await getPolls();
-      console.log(polls, '<< polls data in componenet');
-    };
-    getAllPolls();
-  }, []);
-
   return (
-    <Stack spacing={4}>
+    <React.Suspense fallback={'loading...'}>
       {authenticatedDID && !isAuthenticating && !isAuthorized && (
         <Card className="p-4 bg-red-800">
           <CardContent>
@@ -46,28 +36,12 @@ const App = () => {
           </CardContent>
         </Card>
       )}
-
-      <FeedCTA
-        avatarSrc="https://github.com/akashaorg.png"
-        profileDID="did:pkh:eip155:11155111:0x1a4b3c567890abcdeffedcba1234567890abcdef"
-        cta="Unleash the Meow! 🐾 Create Your Purr-fect Poll!"
-      >
-        <Button size="sm">Create Poll</Button>
-      </FeedCTA>
-      {POLLS.map(poll => (
-        <PollCard
-          pollId={poll.id}
-          title={poll.title}
-          description={poll.description}
-          options={poll.options}
-          author={{
-            did: 'did:pkh:eip155:11155111:0x1a4b3c567890abcdeffedcba1234567890abcdef',
-            avatarSrc: 'https://api.dicebear.com/8.x/adventurer/svg?seed=Man1',
-            name: 'User1',
-          }}
-        />
-      ))}
-    </Stack>
+      <RouterProvider
+        router={router({
+          baseRouteName,
+        })}
+      />
+    </React.Suspense>
   );
 };
 

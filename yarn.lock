@@ -5000,6 +5000,61 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/history@npm:1.114.22":
+  version: 1.114.22
+  resolution: "@tanstack/history@npm:1.114.22"
+  checksum: 10c0/a832b9dd6f5a2dbec46806c0fbf917a36c56ae6b591f873dc008089440b7da689f1a71df0ad198b0c1fe0d4c10130ab027ab96840c43fa788db7cdc3d35268f0
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-router@npm:^1.114.25":
+  version: 1.114.25
+  resolution: "@tanstack/react-router@npm:1.114.25"
+  dependencies:
+    "@tanstack/history": "npm:1.114.22"
+    "@tanstack/react-store": "npm:^0.7.0"
+    "@tanstack/router-core": "npm:1.114.25"
+    jsesc: "npm:^3.1.0"
+    tiny-invariant: "npm:^1.3.3"
+    tiny-warning: "npm:^1.0.3"
+  peerDependencies:
+    react: ">=18.0.0 || >=19.0.0"
+    react-dom: ">=18.0.0 || >=19.0.0"
+  checksum: 10c0/ef450412da24c45b03e136d7f1c044b1df7ddbba7e411f991f0e150ad6edf5149f4800062f216d78683c151f5e3dae7a8766e91c7b904fdbf68baf1ca16beaae
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-store@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "@tanstack/react-store@npm:0.7.0"
+  dependencies:
+    "@tanstack/store": "npm:0.7.0"
+    use-sync-external-store: "npm:^1.4.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+    react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+  checksum: 10c0/7e971ae3c547d0d803133f07737e7cc7cf381e959b4fab3f55755b28c194688392f5b921d3d43b8c9c81bdc721ea8878c680d4ca28a1ccd59e8a64ab7bcfd0f8
+  languageName: node
+  linkType: hard
+
+"@tanstack/router-core@npm:1.114.25":
+  version: 1.114.25
+  resolution: "@tanstack/router-core@npm:1.114.25"
+  dependencies:
+    "@tanstack/history": "npm:1.114.22"
+    "@tanstack/store": "npm:^0.7.0"
+    tiny-invariant: "npm:^1.3.3"
+  checksum: 10c0/3f76cdaf364a39c3d6b68aa515a8da59df75041c07906ccbb71c35bb837e58281d92f02752f61533fa055698388d746a3a8736dd0e0ceb40de809171922d3a19
+  languageName: node
+  linkType: hard
+
+"@tanstack/store@npm:0.7.0, @tanstack/store@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "@tanstack/store@npm:0.7.0"
+  checksum: 10c0/17003f1eba25bb6e9e2557ffb5d9c63cac09aa46f57d670a917727665ccc0b72d8d421ea1c07451257554aa5d14dbfff46875e7ed6a81f133b0738065f3162df
+  languageName: node
+  linkType: hard
+
 "@taquito/utils@npm:^11.2.0":
   version: 11.2.0
   resolution: "@taquito/utils@npm:11.2.0"
@@ -8415,6 +8470,7 @@ __metadata:
     "@radix-ui/react-slot": "npm:^1.1.2"
     "@rollup/plugin-typescript": "npm:12.1.2"
     "@tailwindcss/vite": "npm:4.0.6"
+    "@tanstack/react-router": "npm:^1.114.25"
     "@types/react": "npm:18.3.11"
     "@types/ws": "npm:8.5.14"
     "@vitejs/plugin-basic-ssl": "npm:1.2.0"
@@ -9807,7 +9863,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jsesc@npm:^3.0.2":
+"jsesc@npm:^3.0.2, jsesc@npm:^3.1.0":
   version: 3.1.0
   resolution: "jsesc@npm:3.1.0"
   bin:
@@ -13105,6 +13161,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tiny-invariant@npm:^1.3.3":
+  version: 1.3.3
+  resolution: "tiny-invariant@npm:1.3.3"
+  checksum: 10c0/65af4a07324b591a059b35269cd696aba21bef2107f29b9f5894d83cc143159a204b299553435b03874ebb5b94d019afa8b8eff241c8a4cfee95872c2e1c1c4a
+  languageName: node
+  linkType: hard
+
 "tiny-secp256k1@npm:^1.1.3":
   version: 1.1.7
   resolution: "tiny-secp256k1@npm:1.1.7"
@@ -13116,6 +13179,13 @@ __metadata:
     nan: "npm:^2.13.2"
     node-gyp: "npm:latest"
   checksum: 10c0/3e2abe9e77676be0e233042f101cedef44da167290b12c4130489b6c6f7f52c497d8a13c39119fa15ed68411e5de02afa4a0f2e678958b6936576c422acc7c74
+  languageName: node
+  linkType: hard
+
+"tiny-warning@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "tiny-warning@npm:1.0.3"
+  checksum: 10c0/ef8531f581b30342f29670cb41ca248001c6fd7975ce22122bd59b8d62b4fc84ad4207ee7faa95cde982fa3357cd8f4be650142abc22805538c3b1392d7084fa
   languageName: node
   linkType: hard
 
@@ -13562,7 +13632,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"use-sync-external-store@npm:^1.2.2":
+"use-sync-external-store@npm:^1.2.2, use-sync-external-store@npm:^1.4.0":
   version: 1.4.0
   resolution: "use-sync-external-store@npm:1.4.0"
   peerDependencies:

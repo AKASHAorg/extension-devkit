@@ -4,6 +4,7 @@ import {
   type ContentBlockRootProps,
 } from '@akashaorg/typings/lib/ui';
 import * as React from 'react';
+import PollForm from '../../components/poll-form';
 
 export const PollBlock = (
   props: ContentBlockRootProps & { blockRef?: React.RefObject<BlockInstanceMethods> },
@@ -38,5 +39,9 @@ export const PollBlock = (
     [createBlock, retryCreate],
   );
 
-  return <div>Poll creation form goes here</div>;
+  const handleSubmit = (data) => {
+    console.log(data);
+  };
+
+  return <PollForm onSubmit={handleSubmit} />;
 };
