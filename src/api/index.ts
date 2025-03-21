@@ -44,6 +44,7 @@ export const createPoll = async (
       mutation CreatePoll($input: CreatePollInput!) {
         createPoll(input: $input) {
           document {
+            id
             title
             createdAt
             options {

@@ -43,7 +43,7 @@ type PollFormProps = {
 };
 
 export type PollHandlerRefType = {
-  submitPoll: () => Promise<z.infer<typeof FormSchema> | null>;
+  getFormValues: () => Promise<z.infer<typeof FormSchema> | null>;
 };
 
 const PollForm = forwardRef<PollHandlerRefType, PollFormProps>(
@@ -67,7 +67,7 @@ const PollForm = forwardRef<PollHandlerRefType, PollFormProps>(
     React.useImperativeHandle(
       ref,
       () => ({
-        submitPoll: async () => {
+        getFormValues: async () => {
           const isValid = await form.trigger();
           if (isValid) {
             return form.getValues();
