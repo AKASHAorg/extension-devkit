@@ -14,7 +14,7 @@ const App = () => {
     data: { authenticatedDID, isAuthenticating },
   } = useAkashaStore();
 
-  const [isAuthorized, setIsAuthorized] = useState<boolean>(false);
+  const [isAuthorized, setIsAuthorized] = useState<boolean>(true);
 
   useEffect(() => {
     const checkAuthorization = async () => {
@@ -33,10 +33,6 @@ const App = () => {
     };
     getAllPolls();
   }, []);
-
-  useEffect(() => {
-    console.log(isAuthenticating, authenticatedDID, isAuthorized, '<<< debug');
-  }, [isAuthorized, isAuthenticating, authenticatedDID]);
 
   return (
     <Stack spacing={4}>
