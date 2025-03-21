@@ -9,14 +9,13 @@ import { EventName } from 'chokidar/handler.js';
 import { createHash } from 'crypto';
 
 export const chunkFromId = (id: string) => {
-    return `${id.split('/')
-      .slice(
-        id.split('/').indexOf('src'),
-        id.split('/').length + 1
-      )
+    return `${id
+      .split('/')
+      .slice(id.split('/').indexOf('src'), id.split('/').length + 1)
       .join('_')
       .replaceAll('.tsx', '')
-      .replaceAll('.ts', '')}`;
+      .replaceAll('.ts', '')
+      .replaceAll('.js', '')}`;
   }
 
 export type HMRPluginOptions = {

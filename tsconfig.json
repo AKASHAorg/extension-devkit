@@ -9,6 +9,7 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
     "preserveConstEnums": true,
+    "isolatedModules": true,
     "paths": {
       "@/*": ["./src/*"]
     }

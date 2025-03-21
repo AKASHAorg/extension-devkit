@@ -7,6 +7,8 @@ import {
 } from '@akashaorg/typings/lib/ui';
 import { POLLS, routes } from './components/app-routes';
 import { SquareCheck } from 'lucide-react';
+import getSDK from '@akashaorg/core-sdk';
+import { getComposeClient } from './api';
 import { POLL_EDITOR } from './components/app-routes';
 
 /**
@@ -29,6 +31,13 @@ const SidebarIcon = () => (
     />
   </svg>
 );
+
+export const initialize = () => {
+  const sdk = getSDK();
+  const compose = getComposeClient();
+  const resources = compose.resources;
+  resources.forEach(res => sdk.services.ceramic.setExtraResource(res));
+};
 
 export const register = (opts: IntegrationRegistrationOptions): IAppConfig => {
   return {
