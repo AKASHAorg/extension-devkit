@@ -3,8 +3,11 @@ import {
   IntegrationRegistrationOptions,
   MenuItemAreaType,
   LogoTypeSource,
+  MenuItemType,
 } from '@akashaorg/typings/lib/ui';
+import { POLLS, routes } from './components/app-routes';
 import { SquareCheck } from 'lucide-react';
+import { POLL_EDITOR } from './components/app-routes';
 
 /**
  * Changes in this file requires a full reload in the browser!
@@ -35,8 +38,22 @@ export const register = (opts: IntegrationRegistrationOptions): IAppConfig => {
       label: 'Extension Devkit',
       logo: { type: LogoTypeSource.ICON, value: <SidebarIcon /> },
       area: [MenuItemAreaType.UserAppArea],
-      subRoutes: [],
+      subRoutes: [
+        {
+          label: POLLS,
+          index: 0,
+          route: routes[POLLS],
+          type: MenuItemType.Internal,
+        },
+        {
+          label: POLL_EDITOR,
+          index: 1,
+          route: routes[POLL_EDITOR],
+          type: MenuItemType.Internal,
+        },
+      ],
     },
+
     contentBlocks: [
       {
         propertyType: 'poll-block',
