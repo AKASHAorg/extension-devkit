@@ -1,12 +1,12 @@
 import {
   CatchBoundary,
   Outlet,
-  createRootRouteWithContext,
+  createRootRoute,
   createRoute,
   createRouter,
   redirect,
 } from '@tanstack/react-router';
-import { ICreateRouter, IRouterContext } from '@akashaorg/typings/lib/ui';
+import { ICreateRouter } from '@akashaorg/typings/lib/ui';
 import PollForm from '../poll-form';
 import PollPage from '../poll-page';
 
@@ -18,7 +18,7 @@ const routes = {
   [POLLS]: '/polls',
 } as const;
 
-const rootRoute = createRootRouteWithContext<IRouterContext>()({
+const rootRoute = createRootRoute({
   component: Outlet,
   notFoundComponent: () => <div>Not found</div>,
 });
@@ -64,9 +64,6 @@ const router = ({ baseRouteName, apolloClient }: ICreateRouter) =>
   createRouter({
     routeTree,
     basepath: baseRouteName,
-    context: {
-      apolloClient,
-    },
     defaultErrorComponent: ({ error }) => <div>Error: {error.message}</div>,
   });
 
