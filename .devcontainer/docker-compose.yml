@@ -11,7 +11,6 @@ services:
     tty: true
     ports:
       - '8070:8070'
-      - '8071:8071'
     depends_on:
       - ceramic
       - ceramic-one
