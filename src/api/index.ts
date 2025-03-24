@@ -1,7 +1,7 @@
 import { ComposeClient } from '@composedb/client';
 import { definition } from './__generated__/definition';
 import getSDK from '@akashaorg/core-sdk';
-import { ComposeDBResponse, PollsResponse, VotesByVoterResponse, VotesResponse } from './types';
+import { PollsResponse, VotesByVoterResponse, VotesResponse } from './types';
 
 let composeClient: ComposeClient;
 
@@ -74,8 +74,6 @@ export const createPoll = async (
   }
 };
 
-console.log('createPoll', createPoll);
-
 export const createVote = async (pollId: string, optionID: string, isValid = true) => {
   const compose = getComposeClient();
   try {
@@ -141,8 +139,38 @@ export const getPolls = async () => {
   }
 };
 
-export const getAllPollsWithVotes = async () => {
+export const getPollById = async (pollId: string) => {
   const compose = getComposeClient();
+  try {
+    const res = await compose.executeQuery(
+      `
+      query PollById($pollId: ID!) {
+        node(id: $pollId) {
+          ... on Poll {
+            id
+            title
+            description
+            createdAt
+            options {
+              id
+              name
+            }
+          }
+        }
+      }
+    `,
+      { pollId },
+    );
+    return res;
+  } catch (err) {
+    console.error('Error fetching poll by id', err);
+    return { error: err.message };
+  }
+};
+
+console.log('getPollById', getPollById);
+
+export const getAllPollsWithVotes = async () => {
   try {
     const pollRes = await getPolls();
     if (!pollRes || 'error' in pollRes) {
@@ -184,7 +212,7 @@ export const getAllPollsWithVotes = async () => {
         totalVotes: votes.length,
       };
     });
-
+    console.log('pollsWithVotes', pollsWithVotes);
     return {
       data: {
         pollsWithVotes,

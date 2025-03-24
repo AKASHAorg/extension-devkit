@@ -34,7 +34,7 @@
     "zod": "3.24.2"
   },
   "devDependencies": {
-    "@akashaorg/typings": "0.1.15",
+    "@akashaorg/typings": "0.1.16",
     "@composedb/devtools": "^0.7.1",
     "@composedb/devtools-node": "^0.7.1",
     "@rollup/plugin-typescript": "12.1.2",

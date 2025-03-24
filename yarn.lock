@@ -106,9 +106,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@akashaorg/typings@npm:0.1.15":
-  version: 0.1.15
-  resolution: "@akashaorg/typings@npm:0.1.15"
+"@akashaorg/typings@npm:0.1.16":
+  version: 0.1.16
+  resolution: "@akashaorg/typings@npm:0.1.16"
   dependencies:
     "@apollo/client": "npm:3.11.8"
     "@heroicons/react": "npm:2.1.1"
@@ -116,7 +116,7 @@ __metadata:
     pino: "npm:8.8.0"
     rxjs: "npm:7.8.1"
     zod: "npm:3.24.1"
-  checksum: 10c0/88e19800ddd96070079e5cd490ab332373431a56dcb2bd023de40f46cc9e638c8fe61127e79a1f4c2db504d416e1a0407316296851785ee1d111af8cef17f3e5
+  checksum: 10c0/e88dd424a1422644064f5c07e0b87a21da6d60667b83bcb5bcc35b27902ac0af962b97231e4772ad54d35113eba60bb3d700e719f75706d3f299a8a74082ee9c
   languageName: node
   linkType: hard
 
@@ -8457,7 +8457,7 @@ __metadata:
   dependencies:
     "@akashaorg/composedb-models": "npm:0.1.12"
     "@akashaorg/core-sdk": "npm:0.1.20-alpha"
-    "@akashaorg/typings": "npm:0.1.15"
+    "@akashaorg/typings": "npm:0.1.16"
     "@akashaorg/ui-core-hooks": "npm:0.1.6"
     "@ceramicnetwork/http-client": "npm:^6.4.0"
     "@composedb/devtools": "npm:^0.7.1"
