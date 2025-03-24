@@ -168,8 +168,6 @@ export const getPollById = async (pollId: string) => {
   }
 };
 
-console.log('getPollById', getPollById);
-
 export const getAllPollsWithVotes = async () => {
   try {
     const pollRes = await getPolls();
@@ -212,7 +210,6 @@ export const getAllPollsWithVotes = async () => {
         totalVotes: votes.length,
       };
     });
-    console.log('pollsWithVotes', pollsWithVotes);
     return {
       data: {
         pollsWithVotes,
