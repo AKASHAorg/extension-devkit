@@ -13,8 +13,8 @@ const PollBlockExtension = (
 ) => {
   return (
     <>
-      {props.blockInfo.mode === ContentBlockModes.EDIT && <PollBlock {...props} />}
-      {props.blockInfo.mode === ContentBlockModes.READONLY && <PollReadonlyBlock {...props} />}
+      {props.blockInfo.mode === 'edit-mode' && <PollBlock {...props} />}
+      {props.blockInfo.mode === 'read-only-mode' && <PollReadonlyBlock {...props} />}
     </>
   );
 };
