@@ -27,7 +27,7 @@ const App: React.FC<unknown> = () => {
   return (
     <React.Suspense fallback={'loading...'}>
       {authenticatedDID && !isAuthenticating && !isAuthorized && (
-        <Card className="p-4 bg-red-800">
+        <Card className="p-4 bg-red-800 mb-4">
           <CardContent>
             <Typography variant="sm" bold>
               Some changes requires re-authentification. Please logout and login again to apply them

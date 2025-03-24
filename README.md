@@ -1,3 +1,35 @@
+# How to run this example
+
+Follow the [Installation steps](#installation) below and start the devcontainer
+You will immediately notice an error about a missing file `api/__generated__/definition.js`. This is normal because we'll need to deploy the models.
+
+```tip
+The errors are displayed above the EXTENSION DEVKIT ascii art so it may require to scroll up a bit.
+```
+
+Stop the dev server (ctrl/cmd + c) and in a new terminal (in the same container) run `yarn deploy-models`.
+On the first run, you will have to restart the ceramic container (the script will guide you). After restart run the same command again and the models should now be deployed.
+
+Start the dev server (`yarn dev`) and this time it should start without any errors.
+
+Follow the [Setup and Development Workflow](https://docs.akasha.world/devkit/setup/) guide and after the step 6, instead of creating it locally (as instructed in step 7), click on the `Add Details` button and fill out the required fields in the wizard (description, and at least one tag).
+
+Now click on the `...` dropdown menu on the newly created extension card and from the dropdown select `Publish Extension` and in the next screen click on the `Publish` button.
+
+After publishing, click on `Go to my extensions` and using the same dropdown menu, select `Release Manager`.
+Here we will click on `Create release` and then complete the release details as follows:
+
+```
+Version Number: 1.0.0
+Description: <this release description>
+Source URL: <MainFile url from the devkit>
+```
+
+Of course, this release is a dummy one and it will only work in localhost, but we are just developing it so it's ok.
+
+Now you can continue with step 8 of the [Setup and Development Workflow](https://docs.akasha.world/devkit/setup/)
+
+
 # Extension Devkit for Worlds
 
 The [Devkit](https://github.com/AKASHAorg/extension-devkit) (available on Github) is a starter kit that allows you to develop extensions compatible with [AKASHA Core](https://github.com/AKASHAorg/akasha-core)
