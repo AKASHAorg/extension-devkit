@@ -7,7 +7,7 @@ import path from 'path';
 import { chunkFromId, ViteSpaDev } from './vite-spa-dev';
 import tailwindcss from '@tailwindcss/vite';
 
-const HMR_UPDATE_TOPIC = 'hmr-update';
+const HMR_UPDATE_TOPIC = 'hmr-update'
 
 export default defineConfig(({ mode }) => {
   const isProd = mode !== 'development';
@@ -25,7 +25,6 @@ export default defineConfig(({ mode }) => {
           react: 'React',
           'react-dom': 'ReactDOM',
           '@akashaorg/core-sdk': '@akashaorg/core-sdk',
-          '@akashaorg/ui-core-hooks': '@akashaorg/ui-core-hooks',
         },
       }),
       ...(isProd
@@ -79,7 +78,7 @@ export default defineConfig(({ mode }) => {
           experimentalMinChunkSize: Infinity,
           systemNullSetters: true,
           manualChunks: id => {
-            if (id.includes('src') && !id.includes('/node_modules/')) {
+            if (id.includes('src')) {
               return chunkFromId(id);
             }
             return 'vendor';
@@ -89,22 +88,12 @@ export default defineConfig(({ mode }) => {
             'react-dom': 'ReactDOM',
           },
         },
-        onwarn: (warning, warn) => {
-          if (
-            warning.code === 'INVALID_ANNOTATION' &&
-            (warning.id?.includes('/node_modules/graphql-scalars/esm/') ||
-              warning.id?.includes('/node_modules/@akashaorg/ui-core-hooks/lib/generated/apollo'))
-          ) {
-            return;
-          }
-          return warn(warning);
-        },
       },
       minify: isProd ? true : false,
       emptyOutDir: true,
     },
     optimizeDeps: {
-      include: ['@composedb/client'],
+      exclude: ['node_modules'],
     },
     logLevel: 'info' as const,
     clearScreen: true,

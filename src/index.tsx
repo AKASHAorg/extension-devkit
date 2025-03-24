@@ -3,13 +3,7 @@ import {
   IntegrationRegistrationOptions,
   MenuItemAreaType,
   LogoTypeSource,
-  MenuItemType,
 } from '@akashaorg/typings/lib/ui';
-import { POLLS, routes } from './components/app-routes';
-import { SquareCheck } from 'lucide-react';
-import getSDK from '@akashaorg/core-sdk';
-import { getComposeClient } from './api';
-import { POLL_EDITOR } from './components/app-routes';
 
 /**
  * Changes in this file requires a full reload in the browser!
@@ -32,13 +26,6 @@ const SidebarIcon = () => (
   </svg>
 );
 
-export const initialize = () => {
-  const sdk = getSDK();
-  const compose = getComposeClient();
-  const resources = compose.resources;
-  resources.forEach(res => sdk.services.ceramic.setExtraResource(res));
-};
-
 export const register = (opts: IntegrationRegistrationOptions): IAppConfig => {
   return {
     rootComponent: () => import('./components'),
@@ -47,29 +34,7 @@ export const register = (opts: IntegrationRegistrationOptions): IAppConfig => {
       label: 'Extension Devkit',
       logo: { type: LogoTypeSource.ICON, value: <SidebarIcon /> },
       area: [MenuItemAreaType.UserAppArea],
-      subRoutes: [
-        {
-          label: POLLS,
-          index: 0,
-          route: routes[POLLS],
-          type: MenuItemType.Internal,
-        },
-        {
-          label: POLL_EDITOR,
-          index: 1,
-          route: routes[POLL_EDITOR],
-          type: MenuItemType.Internal,
-        },
-      ],
+      subRoutes: [],
     },
-
-    contentBlocks: [
-      {
-        propertyType: 'poll-block',
-        icon: <SquareCheck />,
-        displayName: 'Poll block',
-        rootComponent: () => import('./extensions/poll-block'),
-      },
-    ],
   };
 };
