@@ -9,6 +9,7 @@ import {
 import { ICreateRouter } from '@akashaorg/typings/lib/ui';
 import PollForm from '../poll-form';
 import PollPage from '../poll-page';
+import PollFormPage from '../poll-forn-page';
 
 const POLL_EDITOR = 'Poll editor';
 const POLLS = 'Polls';
@@ -52,7 +53,7 @@ const pollEditorRoute = createRoute({
         getResetKey={() => 'polls_form_reset'}
         errorComponent={() => <div>Not found</div>}
       >
-        <PollForm onSubmit={() => {}} />
+        <PollFormPage />
       </CatchBoundary>
     );
   },
@@ -67,4 +68,4 @@ const router = ({ baseRouteName, apolloClient }: ICreateRouter) =>
     defaultErrorComponent: ({ error }) => <div>Error: {error.message}</div>,
   });
 
-export { routes, router,  POLL_EDITOR, POLLS };
+export { routes, router, POLL_EDITOR, POLLS };

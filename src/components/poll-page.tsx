@@ -10,7 +10,7 @@ import { PollOption } from '@/api/types';
 import { Card, CardContent } from './ui/card';
 import { Typography } from './ui/typography';
 
-const getOptionPercentage = (
+export const getOptionPercentage = (
   optionId: string,
   votesByOption: { option: PollOption; votesCount: number }[],
   total: number,
