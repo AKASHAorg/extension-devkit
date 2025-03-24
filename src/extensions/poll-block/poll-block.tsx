@@ -2,51 +2,41 @@ import {
   type BlockInstanceMethods,
   type CreateContentBlock,
   type ContentBlockRootProps,
-  IRootExtensionProps,
 } from '@akashaorg/typings/lib/ui';
 import * as React from 'react';
 import PollForm, { PollHandlerRefType } from '../../components/poll-form';
-import { Button } from '../../components/ui/button';
-import { FieldValues, SubmitHandler } from 'react-hook-form';
 import {
   AkashaContentBlockBlockDef,
-  SortOrder,
 } from '@akashaorg/typings/lib/sdk/graphql-types-new';
-import { encodeSlateToBase64, useRootComponentProps } from '@akashaorg/ui-core-hooks';
 import { BlockLabeledValue } from '@akashaorg/typings/lib/sdk/graphql-types-new';
 import {
   useCreateContentBlockMutation,
-  useGetAppsByPublisherDidQuery,
+  useGetAppsQuery,
 } from '@akashaorg/ui-core-hooks/lib/generated/apollo';
 import getSDK from '@akashaorg/core-sdk';
-import { selectLatestAppVersionId } from '@akashaorg/ui-core-hooks/lib/selectors/get-apps-by-publisher-did-query';
+import { selectLatestRelease } from '@akashaorg/ui-core-hooks/lib/selectors/get-apps-query';
 import { createPoll } from '../../api';
 
 export const PollBlock = (
   props: ContentBlockRootProps & { blockRef?: React.RefObject<BlockInstanceMethods> },
 ) => {
-  const [createContentBlock, contentBlockQuery] = useCreateContentBlockMutation();
+  const [createContentBlock] = useCreateContentBlockMutation();
   const pollRef = React.useRef<PollHandlerRefType>(null);
   const sdk = React.useRef(getSDK());
-  const { name, logger } = useRootComponentProps<IRootExtensionProps>();
-  const indexingDid = sdk.current.services.common.misc.getIndexingDID();
   const retryCount = React.useRef<number>();
-  const appReq = useGetAppsByPublisherDidQuery({
+
+  const appReq = useGetAppsQuery({
     variables: {
-      id: indexingDid,
       first: 1,
       filters: { where: { name: { equalTo: props.blockInfo.appName } } },
-      sorting: { createdAt: SortOrder.Desc },
     },
-    context: { source: sdk.current.services.gql.contextSources.default },
   });
-  const appVersionID = selectLatestAppVersionId(appReq.data!);
+
+  const appRelease = selectLatestRelease(appReq.data!);
 
   const createBlock = React.useCallback(
     async ({ nsfw }: CreateContentBlock) => {
       const pollFormValues = await pollRef.current?.getFormValues();
-      console.log('pollFormValues', pollFormValues);
-
       if (!pollFormValues) {
         return {
           response: {
@@ -60,7 +50,7 @@ export const PollBlock = (
       }
 
       const optionsWithIDs = pollFormValues.options.map((option, index) => ({
-        id: index.toString(), // TODO - generate a unique id for the option
+        id: index.toString(),
         name: option.value,
       }));
 
@@ -70,7 +60,9 @@ export const PollBlock = (
         optionsWithIDs,
       );
 
-      console.log({ res });
+      if ('error' in res) {
+        throw new Error(res.error);
+      }
 
       const pollId = res.data?.createPoll.document.id;
 
@@ -84,7 +76,7 @@ export const PollBlock = (
           variables: {
             i: {
               content: {
-                appVersionID: appVersionID,
+                appVersionID: appRelease?.node?.id,
                 createdAt: new Date().toISOString(),
                 content: [contentBlockValue],
                 active: true,
@@ -104,7 +96,7 @@ export const PollBlock = (
           retryCount: retryCount.current,
         };
       } catch (err) {
-        logger.error('error creating content block', err);
+        console.error({ err });
         return {
           response: {
             blockID: '',
@@ -115,12 +107,11 @@ export const PollBlock = (
         };
       }
     },
-    [createContentBlock, props.blockInfo, logger, appVersionID],
+    [createContentBlock, props.blockInfo, appRelease?.node?.id],
   );
 
   const retryCreate = React.useCallback(
     (arg: CreateContentBlock) => {
-      //retry logic goes here
       return createBlock(arg);
     },
     [createBlock],

@@ -14,7 +14,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { PlusIcon, TrashIcon } from 'lucide-react';
-import { Card, CardHeader, CardTitle } from './ui/card';
+import { Card } from './ui/card';
 import { Typography } from './ui/typography';
 import { Stack } from './ui/stack';
 import React, { ForwardedRef, forwardRef } from 'react';

@@ -1,7 +1,7 @@
 import { ComposeClient } from '@composedb/client';
 import { definition } from './__generated__/definition';
 import getSDK from '@akashaorg/core-sdk';
-import { PollsResponse, VotesByVoterResponse, VotesResponse } from './types';
+import { Poll, PollOption, PollsResponse, Vote, VotesByVoterResponse, VotesResponse } from './types';
 
 let composeClient: ComposeClient;
 
@@ -142,10 +142,22 @@ export const getPolls = async () => {
   }
 };
 
-export const getPollById = async (pollId: string) => {
+export const getPollById = async (pollId: string): Promise<{
+  data?: {
+    poll: Poll;
+    votes: Vote[];
+    votesByOption: {
+      option: PollOption;
+      votesCount: number;
+      votes: Vote[];
+    }[];
+    totalVotes: number;
+  };
+  error?: string;
+}> => {
   const compose = getComposeClient();
   try {
-    const res = await compose.executeQuery(
+    const pollRes = await compose.executeQuery(
       `
       query PollById($pollId: ID!) {
         node(id: $pollId) {
@@ -154,6 +166,9 @@ export const getPollById = async (pollId: string) => {
             title
             description
             createdAt
+            author {
+              id
+            }
             options {
               id
               name
@@ -164,7 +179,32 @@ export const getPollById = async (pollId: string) => {
     `,
       { pollId },
     );
-    return res;
+
+    const votesResult = await getVotesByPollId(pollId);
+    const poll = pollRes.data?.node as Poll;
+
+    if (!votesResult || 'error' in votesResult) {
+      return { data: { poll, votes: [], votesByOption: [], totalVotes: 0 }, error: votesResult.error };
+    }
+
+    const votes = votesResult.data?.voteIndex.edges
+      ? votesResult.data.voteIndex.edges.map(edge => edge.node)
+      : [];
+
+    const votesByOption = poll.options.map(option => {
+      const optionVotes = votes.filter(vote => vote.optionID === option.id);
+      return {
+        option,
+        votesCount: optionVotes.length,
+        votes: optionVotes,
+      };
+    });
+
+    return {
+      data: {
+        poll, votes, votesByOption, totalVotes: votes.length,
+      },
+    };
   } catch (err) {
     console.error('Error fetching poll by id', err);
     return { error: err.message };
