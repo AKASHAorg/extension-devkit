@@ -1,48 +1,116 @@
-import * as React from 'react';
-import { ContentCard, ContentCardBody } from '@/components/ui/content-card';
+import { ContentCard, ContentCardAction, ContentCardBody } from '@/components/ui/content-card';
 import { Typography } from '@/components/ui/typography';
 import { Stack } from '@/components/ui/stack';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '../ui/badge';
-import { POLL_SELECTIONS } from '../mock-data';
 import { Check } from 'lucide-react';
+import { useGetProfileByDidQuery } from '@akashaorg/ui-core-hooks/lib/generated';
+import { selectProfileData } from '@akashaorg/ui-core-hooks/lib/selectors/get-profile-by-did-query';
+import { useEffect, useMemo, useState } from 'react';
+import { Vote } from '@/api/types';
+import { createVote } from '@/api';
 
 const PollCard = ({
   pollId,
   title,
   description,
   options,
-  author,
+  authorDID,
   publishedAt,
-}: React.ComponentProps<typeof ContentCard> & {
-  pollId: string;
-  title: string;
-  description: string;
-  options: { id: string; value: string; percentage: number }[];
-}) => {
-  const loggedInDID = 'did:pkh:eip155:11155111:0x1a4b3c567890abcdeffedcba1234567890abcdef';
-  const [pollSelections, setPollSelections] = React.useState(() => {
-    const selectionsSet = new Set<{
-      did: string;
-      pollId: string;
-      optionId: string;
-      value: boolean;
-    }>();
-    options.forEach(option => {
-      const selection = POLL_SELECTIONS.find(
-        selection =>
-          selection.did === loggedInDID &&
-          selection.pollId === pollId &&
-          option.id === selection.optionId,
-      );
-      if (selection) {
-        selectionsSet.add(selection);
+  selectedOptions,
+  loggedDID,
+  totalVotes,
+  votesByOption,
+}: Omit<
+  React.ComponentProps<typeof ContentCard> & {
+    authorDID: string;
+    pollId: string;
+    title: string;
+    description: string;
+    options: { id: string; name: string; percentage: number }[];
+    selectedOptions?: Vote[];
+    loggedDID: string;
+    totalVotes: number;
+    votesByOption: { option: { id: string }; votesCount: number }[];
+  },
+  'author'
+>) => {
+  const profileDataRes = useGetProfileByDidQuery({ variables: { id: authorDID } });
+
+  const author = useMemo(() => {
+    if (profileDataRes.data) {
+      return selectProfileData(profileDataRes.data);
+    }
+    return undefined;
+  }, [profileDataRes]);
+
+  const [pollSelections, setPollSelections] = useState<Vote[]>([]);
+  const [votePercentage, setVotePercentage] = useState<{ [key: string]: number }>();
+
+  useEffect(() => {
+    if (selectedOptions) {
+      setPollSelections(selectedOptions);
+    }
+  }, [selectedOptions]);
+
+  useEffect(() => {
+    setVotePercentage(prev => {
+      if (!prev) {
+        return {};
       }
+      // only update if there is a vote with temp-id
+      if (!pollSelections.find(selection => selection.id?.startsWith('temp-id'))) {
+        return prev;
+      }
+
+      const newPercentage = { ...prev };
+      pollSelections.forEach(selection => {
+        const selId = selection.optionID;
+        let selVoteCount = votesByOption.find(vote => vote.option.id === selId)?.votesCount || 0;
+        // update total votes adding the ones that starts with temp-id
+        const newTotalVotes =
+          totalVotes + pollSelections.filter(sel => sel.id?.startsWith('temp-id')).length;
+
+        if (selection.id?.startsWith('temp-id')) {
+          selVoteCount += 1;
+        }
+        const percentage = (selVoteCount / newTotalVotes) * 100;
+        newPercentage[selId] = Math.round(percentage);
+      });
+      return newPercentage;
     });
-    return Array.from(selectionsSet);
-  });
+  }, [pollSelections, totalVotes]);
+
+  useEffect(() => {
+    if (totalVotes > 0) {
+      setVotePercentage(
+        options.reduce((acc, option) => {
+          acc[option.id] = option.percentage;
+          return acc;
+        }, {}),
+      );
+    }
+  }, [options, totalVotes]);
+
+  const onVote = (optionId: string) => () => {
+    setPollSelections(prev =>
+      prev.concat({
+        createdAt: new Date().toISOString(),
+        id: `temp-id_${optionId}`,
+        optionID: optionId,
+        pollID: pollId,
+        voter: { id: loggedDID },
+        isValid: true,
+      }),
+    );
+    createVote(pollId, optionId, true);
+  };
+
   return (
-    <ContentCard author={author} publishedAt={publishedAt}>
+    <ContentCard
+      author={{ did: author?.did.id || '', name: author?.name || 'Unknown' }}
+      publishedAt={publishedAt}
+    >
       <ContentCardBody className="flex flex-col gap-4">
         <Typography variant="sm" bold>
           {title}
@@ -50,32 +118,19 @@ const PollCard = ({
         <Typography variant="sm">{description}</Typography>
         {options.map(option => (
           <Option
-            value={option.value}
-            percentage={option.percentage}
-            selected={!!pollSelections.find(selection => selection.optionId === option.id)?.value}
-            onSelected={selected => {
-              const newSelections = [...pollSelections];
-              const selection = newSelections.find(selection => selection.optionId === option.id);
-              if (selection) {
-                selection.value = selected;
-                setPollSelections(newSelections);
-              } else {
-                setPollSelections([
-                  ...newSelections,
-                  {
-                    did: loggedInDID,
-                    pollId,
-                    optionId: option.id,
-                    value: selected,
-                  },
-                ]);
-              }
-
-              console.log(newSelections);
-            }}
+            value={option.name}
+            key={option.id}
+            percentage={votePercentage?.[option.id] || 0}
+            selected={!!pollSelections.find(selection => selection.optionID === option.id)}
+            onSelected={onVote(option.id)}
           />
         ))}
       </ContentCardBody>
+      <ContentCardAction>
+        <Typography variant="xs" className="text-muted-foreground">
+          {totalVotes} votes
+        </Typography>
+      </ContentCardAction>
     </ContentCard>
   );
 };
@@ -107,7 +162,7 @@ const Option = ({
         {selected ? (
           <Badge
             onClick={() => {
-              onSelected(false);
+              // onSelected(false);
             }}
             className="cursor-pointer w-[88px]"
           >

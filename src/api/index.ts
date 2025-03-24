@@ -1,6 +1,7 @@
 import { ComposeClient } from '@composedb/client';
 import { definition } from './__generated__/definition';
 import getSDK from '@akashaorg/core-sdk';
+import { ComposeDBResponse, PollsResponse, VotesByVoterResponse, VotesResponse } from './types';
 
 let composeClient: ComposeClient;
 
@@ -47,6 +48,7 @@ export const createPoll = async (
             id
             title
             createdAt
+            description
             options {
               id
               name
@@ -72,6 +74,8 @@ export const createPoll = async (
     return { error: err.message };
   }
 };
+
+console.log('createPoll', createPoll);
 
 export const createVote = async (pollId: string, optionID: string, isValid = true) => {
   const compose = getComposeClient();
@@ -110,9 +114,9 @@ export const createVote = async (pollId: string, optionID: string, isValid = tru
 export const getPolls = async () => {
   const compose = getComposeClient();
   try {
-    const res = await compose.executeQuery(`
+    const res = await compose.executeQuery<PollsResponse>(`
       query AllPolls {
-        pollIndex(first: 10) {
+        pollIndex(first: 100, sorting: { createdAt: DESC }) {
           edges {
             node {
               id
@@ -120,6 +124,7 @@ export const getPolls = async () => {
               author {
                 id
               }
+              description
               createdAt
               options {
                 id
@@ -137,6 +142,61 @@ export const getPolls = async () => {
   }
 };
 
+export const getAllPollsWithVotes = async () => {
+  const compose = getComposeClient();
+  try {
+    const pollRes = await getPolls();
+    if (!pollRes || 'error' in pollRes) {
+      return { error: pollRes.error };
+    }
+    if (!pollRes.data || !pollRes.data['pollIndex']) {
+      return { error: 'No data found' };
+    }
+    const polls = pollRes.data.pollIndex.edges;
+
+    const votes = polls.map(poll => {
+      return getVotesByPollId(poll.node.id);
+    });
+
+    const votesRes = await Promise.all(votes);
+
+    const pollsWithVotes = polls.map((poll, idx) => {
+      const votesResult = votesRes[idx];
+      if (!votesResult || 'error' in votesResult) {
+        return { ...poll, votes: [], votesByOption: [], error: votesResult.error };
+      }
+      const votes = votesResult.data?.voteIndex.edges
+        ? votesResult.data.voteIndex.edges.map(edge => edge.node)
+        : [];
+
+      // group votes by their respective option
+      const votesByOption = poll.node.options.map(option => {
+        const optionVotes = votes.filter(vote => vote.optionID === option.id);
+        return {
+          option,
+          votesCount: optionVotes.length,
+          votes: optionVotes,
+        };
+      });
+      return {
+        ...poll,
+        votes,
+        votesByOption,
+        totalVotes: votes.length,
+      };
+    });
+
+    return {
+      data: {
+        pollsWithVotes,
+      },
+    };
+  } catch (err) {
+    console.error('Error fetching polls with votes', err);
+    return { error: err.message };
+  }
+};
+
 export const getPollsByAuthorId = async (authorId: string) => {
   const compose = getComposeClient();
   try {
@@ -145,11 +205,12 @@ export const getPollsByAuthorId = async (authorId: string) => {
       query PollsByAuthor($authorId: ID!) {
         node(id: $authorId) {
           ... on CeramicAccount {
-            pollList(last: 100) {
+            pollList(last: 100, sorting: { createdAt: DESC }) {
               edges {
                 node {
                   id
                   title
+                  description
                   createdAt
                   options {
                     id
@@ -174,12 +235,12 @@ export const getPollsByAuthorId = async (authorId: string) => {
 export const getVotesByVoterId = async (voterId: string) => {
   const compose = getComposeClient();
   try {
-    const res = await compose.executeQuery(
+    const res = await compose.executeQuery<VotesByVoterResponse>(
       `
       query VotesByVoter($voterId: ID!) {
         node(id: $voterId) {
           ...on CeramicAccount {
-            voteList(last: 100) {
+            voteList(last: 100, sorting: { createdAt: DESC }) {
               edges {
                 node {
                   id
@@ -208,11 +269,12 @@ export const getVotesByVoterId = async (voterId: string) => {
 export const getVotesByPollId = async (pollId: string) => {
   const compose = getComposeClient();
   try {
-    const res = await compose.executeQuery(`
+    const res = await compose.executeQuery<VotesResponse>(`
       query VotesByPollId {
         voteIndex(
           first: 100
           filters: { where: { pollID: { equalTo: "${pollId}" } } }
+          sorting: { createdAt: DESC }
         ) {
           edges {
             node {

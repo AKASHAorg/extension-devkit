@@ -92,7 +92,8 @@ export default defineConfig(({ mode }) => {
         onwarn: (warning, warn) => {
           if (
             warning.code === 'INVALID_ANNOTATION' &&
-            warning.id?.includes('/node_modules/graphql-scalars/esm/')
+            (warning.id?.includes('/node_modules/graphql-scalars/esm/') ||
+              warning.id?.includes('/node_modules/@akashaorg/ui-core-hooks/lib/generated/apollo'))
           ) {
             return;
           }
