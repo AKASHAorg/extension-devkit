@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { BlockInstanceMethods, ContentBlockRootProps } from '@akashaorg/typings/lib/ui';
 import { useAkashaStore } from '@akashaorg/ui-core-hooks';
-import { createVote, getPollById } from '../../api';
+import { createVote, getPollById, hasSession } from '../../api';
 import { getOptionPercentage } from '@/lib/utils';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Typography } from '@/components/ui/typography';
@@ -32,8 +32,20 @@ export const PollReadonlyBlock = (
   }, [pollId]);
 
   const {
-    data: { authenticatedDID },
+    data: { authenticatedDID, isAuthenticating },
   } = useAkashaStore();
+
+  const [isAuthorized, setIsAuthorized] = useState<boolean>(true);
+
+  useEffect(() => {
+    const checkAuthorization = async () => {
+      if (authenticatedDID && !isAuthenticating) {
+        const authorized = await hasSession();
+        setIsAuthorized(authorized);
+      }
+    };
+    checkAuthorization();
+  }, [authenticatedDID, isAuthenticating]);
 
   useEffect(() => {
     if (!authenticatedDID || !response?.data || !response?.data?.votes) return;
@@ -113,6 +125,7 @@ export const PollReadonlyBlock = (
             percentage={votePercentages[option.id] ?? 0}
             selected={pollSelections.some(vote => vote.optionID === option.id)}
             onSelected={onVote(option.id)}
+            canVote={isAuthorized}
           />
         ))}
         <Typography variant="xs" className="text-muted-foreground">

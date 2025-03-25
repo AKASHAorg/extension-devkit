@@ -15,7 +15,11 @@ import {
 } from '@akashaorg/ui-core-hooks/lib/generated/apollo';
 import getSDK from '@akashaorg/core-sdk';
 import { selectLatestRelease } from '@akashaorg/ui-core-hooks/lib/selectors/get-apps-query';
-import { createPoll } from '../../api';
+import { createPoll, hasSession } from '../../api';
+import { useEffect, useState } from 'react';
+import { useAkashaStore } from '@akashaorg/ui-core-hooks';
+import { Typography } from '@/components/ui/typography';
+import { Card, CardContent } from '@/components/ui/card';
 
 export const PollBlock = (
   props: ContentBlockRootProps & { blockRef?: React.RefObject<BlockInstanceMethods> },
@@ -24,6 +28,21 @@ export const PollBlock = (
   const pollRef = React.useRef<PollHandlerRefType>(null);
   const sdk = React.useRef(getSDK());
   const retryCount = React.useRef<number>();
+  const {
+    data: { authenticatedDID, isAuthenticating },
+  } = useAkashaStore();
+
+  const [isAuthorized, setIsAuthorized] = useState<boolean>(true);
+
+  useEffect(() => {
+    const checkAuthorization = async () => {
+      if (authenticatedDID && !isAuthenticating) {
+        const authorized = await hasSession();
+        setIsAuthorized(authorized);
+      }
+    };
+    checkAuthorization();
+  }, [authenticatedDID, isAuthenticating]);
 
   const appReq = useGetAppsQuery({
     variables: {
@@ -136,7 +155,16 @@ export const PollBlock = (
 
   return (
     <>
-      <PollForm ref={pollRef} hideSubmitButton />
+      {!isAuthorized && (
+        <Card>
+          <CardContent>
+            <Typography variant="sm" bold>
+              You need to re-login to be able to create polls!
+            </Typography>
+          </CardContent>
+        </Card>
+      )}
+      {isAuthorized && <PollForm ref={pollRef} hideSubmitButton />}
     </>
   );
 };
