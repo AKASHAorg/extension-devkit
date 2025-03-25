@@ -115,6 +115,11 @@ export const PollReadonlyBlock = (
             onSelected={onVote(option.id)}
           />
         ))}
+        <Typography variant="xs" className="text-muted-foreground">
+          {response.data?.totalVotes +
+            pollSelections.filter(v => v.id?.startsWith('temp-id_')).length}{' '}
+          votes
+        </Typography>
       </CardContent>
     </Card>
   );

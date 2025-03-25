@@ -7,9 +7,8 @@ import {
   redirect,
 } from '@tanstack/react-router';
 import { ICreateRouter } from '@akashaorg/typings/lib/ui';
-import PollForm from '../poll-form';
 import PollPage from '../poll-page';
-import PollFormPage from '../poll-forn-page';
+import PollFormPage from '../poll-form-page';
 
 const POLL_EDITOR = 'Poll editor';
 const POLLS = 'Polls';

@@ -40,6 +40,7 @@ const FormSchema = z.object({
 type PollFormProps = {
   onSubmit?: SubmitHandler<z.infer<typeof FormSchema>>;
   hideSubmitButton?: boolean;
+  isSubmitting?: boolean;
 };
 
 export type PollHandlerRefType = {
@@ -47,7 +48,10 @@ export type PollHandlerRefType = {
 };
 
 const PollForm = forwardRef<PollHandlerRefType, PollFormProps>(
-  ({ onSubmit, hideSubmitButton }: PollFormProps, ref: ForwardedRef<PollHandlerRefType>) => {
+  (
+    { onSubmit, hideSubmitButton, isSubmitting }: PollFormProps,
+    ref: ForwardedRef<PollHandlerRefType>,
+  ) => {
     const formRef = React.useRef<HTMLFormElement>();
 
     const form = useForm<z.infer<typeof FormSchema>>({
@@ -163,7 +167,7 @@ const PollForm = forwardRef<PollHandlerRefType, PollFormProps>(
                 </Button>
 
                 {!hideSubmitButton && (
-                  <Button type="submit" className="self-end">
+                  <Button type="submit" className="self-end" disabled={isSubmitting}>
                     Create poll
                   </Button>
                 )}
