@@ -1,9 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { BlockInstanceMethods, ContentBlockRootProps } from '@akashaorg/typings/lib/ui';
 import { useAkashaStore } from '@akashaorg/ui-core-hooks';
-import { getPollById } from '../../api';
-import { getOptionPercentage } from '../../components/poll-page';
-import { PollCard } from '../../components/poll-card';
+import { createVote, getPollById } from '../../api';
+import { getOptionPercentage } from '@/lib/utils';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Typography } from '@/components/ui/typography';
+import { Option } from '@/components/poll-card/poll-option';
+import { Vote } from '@/api/types';
 
 type PollResponse = Awaited<ReturnType<typeof getPollById>>;
 
@@ -17,6 +20,7 @@ export const PollReadonlyBlock = (
   const pollId = value.pollId;
 
   const [response, setResponse] = useState<PollResponse | null>(null);
+  const [pollSelections, setPollSelections] = useState<Vote[]>([]);
 
   useEffect(() => {
     const fetchPoll = async () => {
@@ -31,7 +35,45 @@ export const PollReadonlyBlock = (
     data: { authenticatedDID },
   } = useAkashaStore();
 
-  if (!response) {
+  useEffect(() => {
+    if (!authenticatedDID || !response?.data || !response?.data?.votes) return;
+    if (!response?.data.poll) return;
+
+    setPollSelections(
+      response.data.votes.filter(
+        vote => vote.voter.id === authenticatedDID && vote.pollID === response.data?.poll.id,
+      ),
+    );
+  }, [response?.data, authenticatedDID]);
+
+  const votePercentages = useMemo(() => {
+    if (!response?.data) return {};
+    if (!response.data.votesByOption || !pollSelections.length) return {};
+    const { votesByOption, totalVotes } = response.data;
+    if (pollSelections.some(vote => vote.id?.startsWith('temp-id_'))) {
+      // we have at least one temp vote
+      return votesByOption.reduce((acc, vote) => {
+        const optionId = vote.option.id;
+        const totalV = totalVotes + pollSelections.filter(v => v.id?.startsWith('temp-id_')).length;
+        const voteCount =
+          vote.votesCount +
+          pollSelections.filter(v => v.optionID === optionId && v.id?.startsWith('temp-id_'))
+            .length;
+        const percentage = (voteCount / totalV) * 100;
+        acc[optionId] = Math.round(percentage);
+        return acc;
+      }, {});
+    }
+    // initial votes
+    return votesByOption.reduce((acc, vote) => {
+      const optionId = vote.option.id;
+      const percentage = getOptionPercentage(optionId, votesByOption, totalVotes);
+      acc[optionId] = percentage;
+      return acc;
+    }, {});
+  }, [response?.data, pollSelections]);
+
+  if (!response?.data) {
     return <div>Loading poll...</div>;
   }
 
@@ -39,34 +81,41 @@ export const PollReadonlyBlock = (
     return <div>Error loading poll: {response.error}</div>;
   }
 
-  const { poll, votes, votesByOption, totalVotes } = response.data!;
-
-  if (!poll) {
+  if (!response?.data.poll) {
     return <div>Poll not found</div>;
   }
 
-  return <PollCard
-    pollId={poll.id}
-    title={poll.title}
-    selectedOptions={votes.filter(
-      vote => vote.voter.id === authenticatedDID && vote.pollID === poll.id,
-    )}
-    description={poll.description}
-    options={poll.options.map(opt => ({
-      id: opt.id,
-      name: opt.name,
-      percentage: getOptionPercentage(
-        opt.id,
-        votesByOption,
-        'totalVotes' in poll ? totalVotes : 0,
-      ),
-    }))}
-    loggedDID={authenticatedDID}
-    authorDID={poll.author.id}
-    publishedAt={`${new Date(poll.createdAt).toDateString()} - ${new Date(
-      poll.createdAt,
-    ).toLocaleTimeString()}`}
-    totalVotes={totalVotes || 0}
-    votesByOption={votesByOption}
-  />;
+  const onVote = (optionId: string) => () => {
+    setPollSelections(prev =>
+      prev.concat({
+        createdAt: new Date().toISOString(),
+        id: `temp-id_${optionId}`,
+        optionID: optionId,
+        pollID: pollId,
+        voter: { id: authenticatedDID },
+        isValid: true,
+      }),
+    );
+    createVote(pollId, optionId, true);
+  };
+
+  return (
+    <Card className="border-0 px-0 py-4">
+      <CardHeader>
+        <Typography variant="h5">{response.data.poll.title}</Typography>
+        <Typography variant="p">{response.data.poll.description}</Typography>
+      </CardHeader>
+      <CardContent>
+        {response.data.poll.options.map(option => (
+          <Option
+            key={option.id}
+            value={option.name}
+            percentage={votePercentages[option.id] ?? 0}
+            selected={pollSelections.some(vote => vote.optionID === option.id)}
+            onSelected={onVote(option.id)}
+          />
+        ))}
+      </CardContent>
+    </Card>
+  );
 };

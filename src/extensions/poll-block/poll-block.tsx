@@ -61,7 +61,15 @@ export const PollBlock = (
       );
 
       if ('error' in res) {
-        throw new Error(res.error);
+        console.error(res.error);
+        return {
+          response: {
+            blockID: '',
+            error: res.error,
+          },
+          blockInfo: props.blockInfo,
+          retryCount: retryCount,
+        };
       }
 
       const pollId = res.data?.createPoll.document.id;

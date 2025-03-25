@@ -6,26 +6,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from '@tanstack/react-router';
 import { useAkashaStore, useRootComponentProps } from '@akashaorg/ui-core-hooks';
 import { getAllPollsWithVotes } from '@/api';
-import { PollOption } from '@/api/types';
 import { Card, CardContent } from './ui/card';
 import { Typography } from './ui/typography';
-
-export const getOptionPercentage = (
-  optionId: string,
-  votesByOption: { option: PollOption; votesCount: number }[],
-  total: number,
-) => {
-  if (!total) {
-    return 0;
-  }
-  const optionVotes = votesByOption.find(item => item.option.id === optionId);
-  const votesForOption = optionVotes?.votesCount || 0;
-  return Math.round((votesForOption / total) * 100);
-};
+import { getOptionPercentage } from '@/lib/utils';
 
 const PollPage = () => {
   const {
-    data: { authenticatedDID, authenticatedProfile },
+    data: { authenticatedDID },
   } = useAkashaStore();
 
   const { navigateToModal, getCorePlugins } = useRootComponentProps();

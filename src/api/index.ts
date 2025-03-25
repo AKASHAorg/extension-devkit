@@ -191,7 +191,7 @@ export const getPollById = async (pollId: string): Promise<{
       ? votesResult.data.voteIndex.edges.map(edge => edge.node)
       : [];
 
-    const votesByOption = poll.options.map(option => {
+    const votesByOption = poll?.options.map(option => {
       const optionVotes = votes.filter(vote => vote.optionID === option.id);
       return {
         option,

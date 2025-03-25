@@ -1,14 +1,11 @@
-import { ContentCard, ContentCardAction, ContentCardBody } from '@/components/ui/content-card';
+import { ContentCard, ContentCardBody } from '@/components/ui/content-card';
 import { Typography } from '@/components/ui/typography';
-import { Stack } from '@/components/ui/stack';
-import { Progress } from '@/components/ui/progress';
-import { Badge } from '../ui/badge';
-import { Check } from 'lucide-react';
 import { useGetProfileByDidQuery } from '@akashaorg/ui-core-hooks/lib/generated';
 import { selectProfileData } from '@akashaorg/ui-core-hooks/lib/selectors/get-profile-by-did-query';
 import { useEffect, useMemo, useState } from 'react';
 import { Vote } from '@/api/types';
 import { createVote } from '@/api';
+import { Option } from './poll-option';
 
 const PollCard = ({
   pollId,
@@ -32,6 +29,7 @@ const PollCard = ({
     loggedDID: string;
     totalVotes: number;
     votesByOption: { option: { id: string }; votesCount: number }[];
+    asContentBlock?: boolean;
   },
   'author'
 >) => {
@@ -125,62 +123,11 @@ const PollCard = ({
             onSelected={onVote(option.id)}
           />
         ))}
-      </ContentCardBody>
-      <ContentCardAction>
         <Typography variant="xs" className="text-muted-foreground">
           {totalVotes} votes
         </Typography>
-      </ContentCardAction>
+      </ContentCardBody>
     </ContentCard>
-  );
-};
-
-const Option = ({
-  value,
-  percentage,
-  selected,
-  onSelected,
-  ...props
-}: React.ComponentProps<typeof Stack> & {
-  value: string;
-  percentage: number;
-  selected: boolean;
-  onSelected: (selected: boolean) => void;
-}) => {
-  return (
-    <Stack spacing={4} {...props}>
-      <Typography variant="sm" bold>
-        {value}
-      </Typography>
-      <Stack direction="row" alignItems="center" justifyContent="between" spacing={2}>
-        <Stack direction="row" spacing={2} className="w-full">
-          <Progress value={percentage} className="w-[75%]" />
-          <Typography variant="xs" className="text-muted-foreground">
-            ({percentage})%
-          </Typography>
-        </Stack>
-        {selected ? (
-          <Badge
-            onClick={() => {
-              // onSelected(false);
-            }}
-            className="cursor-pointer w-[88px]"
-          >
-            <Check /> Selected
-          </Badge>
-        ) : (
-          <Badge
-            variant="outline"
-            onClick={() => {
-              onSelected(true);
-            }}
-            className="cursor-pointer w-[88px]"
-          >
-            Select
-          </Badge>
-        )}
-      </Stack>
-    </Stack>
   );
 };
 
