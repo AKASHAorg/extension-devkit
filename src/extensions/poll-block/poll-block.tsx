@@ -27,7 +27,7 @@ export const PollBlock = (
   const [createContentBlock] = useCreateContentBlockMutation();
   const pollRef = React.useRef<PollHandlerRefType>(null);
   const sdk = React.useRef(getSDK());
-  const retryCount = React.useRef<number>();
+  const retryCount = React.useRef<number>(0);
   const {
     data: { authenticatedDID, isAuthenticating },
   } = useAkashaStore();

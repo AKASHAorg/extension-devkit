@@ -1,7 +1,15 @@
 import { ComposeClient } from '@composedb/client';
 import { definition } from './__generated__/definition';
 import getSDK from '@akashaorg/core-sdk';
-import { Poll, PollOption, PollsResponse, Vote, VotesByVoterResponse, VotesResponse } from './types';
+import {
+  CreatePollResponse,
+  Poll,
+  PollOption,
+  PollsResponse,
+  Vote,
+  VotesByVoterResponse,
+  VotesResponse,
+} from './types';
 
 let composeClient: ComposeClient;
 
@@ -40,7 +48,7 @@ export const createPoll = async (
 ) => {
   const compose = getComposeClient();
   try {
-    const res = await compose.executeQuery(
+    const res = await compose.executeQuery<CreatePollResponse>(
       `
       mutation CreatePoll($input: CreatePollInput!) {
         createPoll(input: $input) {
