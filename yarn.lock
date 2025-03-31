@@ -106,9 +106,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@akashaorg/typings@npm:0.1.13":
-  version: 0.1.13
-  resolution: "@akashaorg/typings@npm:0.1.13"
+"@akashaorg/typings@npm:0.1.16":
+  version: 0.1.16
+  resolution: "@akashaorg/typings@npm:0.1.16"
   dependencies:
     "@apollo/client": "npm:3.11.8"
     "@heroicons/react": "npm:2.1.1"
@@ -116,7 +116,7 @@ __metadata:
     pino: "npm:8.8.0"
     rxjs: "npm:7.8.1"
     zod: "npm:3.24.1"
-  checksum: 10c0/1c1a7308d5bf9f9bd95e87cde310ecbd13adaf69c36bb5eea341ef56b2b9e15ed5fa4ad88442df895ce045e8cf00f9770c75803c0834d5bbcd187fe7ee00ed8b
+  checksum: 10c0/e88dd424a1422644064f5c07e0b87a21da6d60667b83bcb5bcc35b27902ac0af962b97231e4772ad54d35113eba60bb3d700e719f75706d3f299a8a74082ee9c
   languageName: node
   linkType: hard
 
@@ -8009,7 +8009,7 @@ __metadata:
   dependencies:
     "@akashaorg/composedb-models": "npm:0.1.12"
     "@akashaorg/core-sdk": "npm:0.1.18-alpha"
-    "@akashaorg/typings": "npm:0.1.13"
+    "@akashaorg/typings": "npm:0.1.16"
     "@akashaorg/ui-core-hooks": "npm:0.1.6"
     "@radix-ui/react-slot": "npm:^1.1.2"
     "@rollup/plugin-typescript": "npm:12.1.2"
