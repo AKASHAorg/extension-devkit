@@ -4,6 +4,7 @@ import {
   MenuItemAreaType,
   LogoTypeSource,
 } from '@akashaorg/typings/lib/ui';
+import { CirclePlay } from 'lucide-react';
 
 /**
  * Changes in this file requires a full reload in the browser!
@@ -36,5 +37,14 @@ export const register = (opts: IntegrationRegistrationOptions): IAppConfig => {
       area: [MenuItemAreaType.UserAppArea],
       subRoutes: [],
     },
+
+    contentBlocks: [
+      {
+        propertyType: 'dad-joke-block',
+        icon: <CirclePlay />,
+        displayName: 'Dad Joke block',
+        rootComponent: () => import('./extensions/dad-joke-block'),
+      },
+    ],
   };
 };
