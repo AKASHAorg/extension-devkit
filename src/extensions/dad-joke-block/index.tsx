@@ -5,8 +5,8 @@ import {
   ContentBlockModes,
   ContentBlockRootProps,
 } from '@akashaorg/typings/lib/ui';
-import { DadJokeBlock } from './dad-joke-block';
-import { DadJokeReadonlyBlock } from './dad-joke-readonly-block';
+import { DadJokeBlock } from './dad-joke';
+import { DadJokeReadonlyBlock } from './dad-joke-readonly';
 
 const PollBlockExtension = (
   props: ContentBlockRootProps & { blockRef?: React.RefObject<BlockInstanceMethods> },
