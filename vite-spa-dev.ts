@@ -185,8 +185,9 @@ export const ViteSpaDev = (opt: HMRPluginOptions): Plugin => {
                 server = createServer({
                     cert: config.server.https?.cert,
                     key: config.server.https?.key
-                }, (req, res) => {
+                }, (req, res) => {                    
                     res.setHeader('Access-Control-Allow-Origin', '*');
+                    res.setHeader('Access-Control-Allow-Private-Network', 'true');
                     res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
                     res.setHeader('Pragma', 'no-cache');
                     res.setHeader('Expires', '0');
