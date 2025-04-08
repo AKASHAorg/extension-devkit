@@ -8,7 +8,7 @@ import {
 import { DadJokeBlock } from './dad-joke';
 import { DadJokeReadonlyBlock } from './dad-joke-readonly';
 
-const PollBlockExtension = (
+const DadJokeBlockExtension = (
   props: ContentBlockRootProps & { blockRef?: React.RefObject<BlockInstanceMethods> },
 ) => {
   return (
@@ -18,4 +18,4 @@ const PollBlockExtension = (
     </>
   );
 };
-export default withProviders<ContentBlockRootProps>(PollBlockExtension);
+export default withProviders<ContentBlockRootProps>(DadJokeBlockExtension);
