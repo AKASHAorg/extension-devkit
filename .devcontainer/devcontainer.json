@@ -2,14 +2,18 @@
   "name": "Extension DevKit",
   "dockerComposeFile": "./docker-compose.yml",
   "service": "devcontainer",
-  "postCreateCommand": "yarn install",
+  "postCreateCommand": "yarn install && chown $(id -u):$(id -g) /workspace/.devcontainer/data/ceramic_daemon/daemon.config.json",
   "postAttachCommand": "yarn dev",
   "customizations": {
     "jetbrains": {
       "backend": "WebStorm"
     },
     "vscode": {
-      "extensions": ["esbenp.prettier-vscode", "bradlc.vscode-tailwindcss"]
+      "extensions": [
+        "esbenp.prettier-vscode",
+        "bradlc.vscode-tailwindcss",
+        "ms-azuretools.vscode-docker"
+      ]
     }
   },
   "remoteUser": "node",

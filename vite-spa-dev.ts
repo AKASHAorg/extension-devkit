@@ -287,29 +287,38 @@ export const ViteSpaDev = (opt: HMRPluginOptions): Plugin => {
                 });
 
                 server.listen(options.server.port, options.server.host, () => {
-                    console.info(`
-*********************************************************
-    ▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖▗▄▄▄▖▗▖  ▗▖ ▗▄▄▖▗▄▄▄▖ ▗▄▖ ▗▖  ▗▖
-    ▐▌    ▝▚▞▘   █  ▐▌   ▐▛▚▖▐▌▐▌     █  ▐▌ ▐▌▐▛▚▖▐▌
-    ▐▛▀▀▘  ▐▌    █  ▐▛▀▀▘▐▌ ▝▜▌ ▝▀▚▖  █  ▐▌ ▐▌▐▌ ▝▜▌
-    ▐▙▄▄▖▗▞▘▝▚▖  █  ▐▙▄▄▖▐▌  ▐▌▗▄▄▞▘▗▄█▄▖▝▚▄▞▘▐▌  ▐▌
-                                                                                
-            ▗▄▄▄  ▗▄▄▄▖▗▖  ▗▖▗▖ ▗▖▗▄▄▄▖▗▄▄▄▖
-            ▐▌  █ ▐▌   ▐▌  ▐▌▐▌▗▞▘  █    █  
-            ▐▌  █ ▐▛▀▀▘▐▌  ▐▌▐▛▚▖   █    █  
-            ▐▙▄▄▀ ▐▙▄▄▖ ▝▚▞▘ ▐▌ ▐▌▗▄█▄▖  █  
-                                    
-*********************************************************
-`);
-    console.log('\x1b[36m%s\x1b[0m', 'Documentation: \x1b[0m','https://docs.akasha.world/devkit');
-    console.log('');
-    console.log('\x1b[36m%s\x1b[0m', 'Server: \x1b[0m', `${options.server.https ? 'https' : 'http'}://${options.server.host}:${options.server.port}`);
-    console.log('\x1b[36m%s\x1b[0m', 'Extension ID: \x1b[0m', `${packageJSON.name}`);
-    console.log('\x1b[36m%s\x1b[0m','MainFile: \x1b[0m', `${mainFile}`);
-    console.log('');
-    console.log('🔴 Please open MainFile url (from above) in your browser to make sure that the index file loads.');
-    console.log('');
-    console.log('*********************************************************');
+                    console.info(
+                      `************************* EXTENSION DEVKIT *************************`,
+                    );
+                    console.log('');
+                      console.log(
+                        '\x1b[36m%s\x1b[0m',
+                        'Documentation: \x1b[0m',
+                        'https://docs.akasha.world/devkit',
+                      );
+                      console.log('');
+                      console.log(
+                        '\x1b[36m%s\x1b[0m',
+                        'Server: \x1b[0m',
+                        `${options.server.https ? 'https' : 'http'}://${options.server.host}:${
+                          options.server.port
+                        }`,
+                      );
+                      console.log(
+                        '\x1b[36m%s\x1b[0m',
+                        'Extension ID: \x1b[0m',
+                        `${packageJSON.name}`,
+                      );
+                      console.log('\x1b[36m%s\x1b[0m', 'MainFile: \x1b[0m', `${mainFile}`);
+                      console.log('');
+                      console.log(
+                        '\x1b[33m%s\x1b[0m',
+                        'Please open MainFile url (from above) in your browser to make sure that the index file loads. \x1b[0m',
+                      );
+                      console.log('');
+                      console.log(
+                        '*********************************************************************',
+                      );
                 });
             }
         }

@@ -23,9 +23,9 @@ export default defineConfig(({ mode }) => {
       createExternal({
         externals: {
           react: 'React',
-          'react-dom': 'ReactDOM',
-          '@akashaorg/core-sdk': '@akashaorg/core-sdk',
-          '@akashaorg/ui-core-hooks': '@akashaorg/ui-core-hooks',
+          'react-dom/client': 'ReactDOM',
+          '@akashaorg/core-sdk': '"@akashaorg/core-sdk"',
+          '@akashaorg/ui-core-hooks': '"@akashaorg/ui-core-hooks"',
         },
       }),
       ...(isProd
